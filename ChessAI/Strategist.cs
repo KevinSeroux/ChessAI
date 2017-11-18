@@ -49,13 +49,14 @@ namespace ChessAI
         {
             Ply ply = null;
 
-            watch.Start();
+            watch.Restart();
 
             // Iterative deepening search
             for (uint depth = 2; watch.ElapsedMilliseconds < 95; depth++)
                 ply = NegaMax(depth);
 
-            watch.Reset();
+            watch.Stop();
+            Debug.Assert(watch.ElapsedMilliseconds >= 100, "IA took more than 100ms to decide");
 
             return ply;
         }
