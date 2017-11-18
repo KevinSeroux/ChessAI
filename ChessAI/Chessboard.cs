@@ -1,8 +1,19 @@
-﻿namespace ChessAI
+﻿using System.Collections.Generic;
+
+namespace ChessAI
 {
     // TODO: Reset the chessboard when resetting all the positions
     class Chessboard
     {
+        // TODO: Replace both "object" by chessboard representation
+        private object pos;
+        private Stack<object> stack;
+
+        public Chessboard()
+        {
+            stack = new Stack<object>();
+        }
+
         public uint CountMen
         {
             get { return 5; }
@@ -10,17 +21,24 @@
 
         public void Push(Ply ply)
         {
+            // Backup the current chessboard
+            stack.Push(pos);
 
+            //TODO; Here apply the ply
+            //...
         }
 
+        // Cancel the previous ply
         public void Pop()
         {
-
+            pos = stack.Pop();
         }
 
+        // Restore the chessboard to the initial state
         public void PopAll()
         {
-
+            while (stack.Count >= 2) stack.Pop();
+            Pop();
         }
 
         public Bitboard ToBitboard()
