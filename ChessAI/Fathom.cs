@@ -212,8 +212,7 @@ namespace ChessAI
             UInt32 rule50,
             UInt32 castling,
             UInt32 ep,
-            bool turn,
-            UIntPtr results
+            bool turn
         )
         {
             return tb_probe_wdl(

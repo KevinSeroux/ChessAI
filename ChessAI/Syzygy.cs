@@ -29,14 +29,49 @@ namespace ChessAI
                 e is DllNotFoundException || e is SyzygyLoadException
             ) { System.Console.WriteLine(e.Message); }
         }
-
-        //TODO
+        
         public WDL? getWDL()
         {
             if (impl is null) return null;
             if (board.CountMen > impl.Largest) return null;
 
-            return 0;
+            Bitboard bitboard = board.ToBitboard();
+
+            uint res = impl.ProbeWDL(
+                bitboard.white,
+                bitboard.black,
+                bitboard.kings,
+                bitboard.queens,
+                bitboard.rooks,
+                bitboard.bishops,
+                bitboard.knights,
+                bitboard.pawns,
+                0, // 50-move clock
+                bitboard.castling,
+                bitboard.ep, // "En passant"
+                bitboard.turn
+            );
+
+            switch(res)
+            {
+                case Fathom.TB_WIN:
+                    return WDL.WIN;
+
+                case Fathom.TB_CURSED_WIN:
+                    return WDL.CURSED_WIN;
+
+                case Fathom.TB_DRAW:
+                    return WDL.DRAW;
+
+                case Fathom.TB_BLESSED_LOSS:
+                    return WDL.BLESSED_LOSS;
+
+                case Fathom.TB_LOSS:
+                    return WDL.LOSS;
+
+                default:
+                    return null;
+            }
         }
 
         public Ply getBestPly()
@@ -62,93 +97,96 @@ namespace ChessAI
                 UIntPtr.Zero // No more results
             );
 
-            String status;
-
-            if (res == Fathom.TB_RESULT_CHECKMATE)
-                status = "Checkmate";
-
-            else if (res == Fathom.TB_RESULT_STALEMATE)
-                status = "Stalemate";
-
-            else if (res == Fathom.TB_RESULT_FAILED)
-                status = "Failed";
-
-            else
-                status = "Normal";
-
-            uint wdl = Fathom.GetWDL(res);
-            String wdlStr;
-
-            switch (wdl)
-            {
-                case Fathom.TB_WIN:
-                    wdlStr = "WIN";
-                    break;
-
-                case Fathom.TB_CURSED_WIN:
-                    wdlStr = "CURSED WIN";
-                    break;
-
-                case Fathom.TB_DRAW:
-                    wdlStr = "DRAW";
-                    break;
-
-                case Fathom.TB_BLESSED_LOSS:
-                    wdlStr = "BLESSED LOSS";
-                    break;
-
-                case Fathom.TB_LOSS:
-                    wdlStr = "LOSS";
-                    break;
-
-                default:
-                    wdlStr = "N/A";
-                    break;
-            }
-
-            uint dtz = Fathom.GetDTZ(res);
             uint ep = Fathom.GetEP(res);
             uint promote = Fathom.GetPromotes(res);
-
             uint from = Fathom.GetFrom(res);
             uint to = Fathom.GetTo(res);
             Ply ply = new Ply(from, to);
 
-            String promoteStr;
-            switch(promote)
+            // From here, it is just printf debugging
             {
-                case Fathom.TB_PROMOTES_NONE:
-                    promoteStr = "nope";
-                    break;
+                String status;
 
-                case Fathom.TB_PROMOTES_ROOK:
-                    promoteStr = "ROOK";
-                    break;
+                if (res == Fathom.TB_RESULT_CHECKMATE)
+                    status = "Checkmate";
 
-                case Fathom.TB_PROMOTES_KNIGHT:
-                    promoteStr = "KNIGHT";
-                    break;
+                else if (res == Fathom.TB_RESULT_STALEMATE)
+                    status = "Stalemate";
 
-                case Fathom.TB_PROMOTES_BISHOP:
-                    promoteStr = "BISHOP";
-                    break;
+                else if (res == Fathom.TB_RESULT_FAILED)
+                    status = "Failed";
 
-                case Fathom.TB_PROMOTES_QUEEN:
-                    promoteStr = "QUEEN";
-                    break;
+                else
+                    status = "Normal";
 
-                default:
-                    promoteStr = "N/A";
-                    break;
+                uint wdl = Fathom.GetWDL(res);
+                String wdlStr;
+
+                switch (wdl)
+                {
+                    case Fathom.TB_WIN:
+                        wdlStr = "WIN";
+                        break;
+
+                    case Fathom.TB_CURSED_WIN:
+                        wdlStr = "CURSED WIN";
+                        break;
+
+                    case Fathom.TB_DRAW:
+                        wdlStr = "DRAW";
+                        break;
+
+                    case Fathom.TB_BLESSED_LOSS:
+                        wdlStr = "BLESSED LOSS";
+                        break;
+
+                    case Fathom.TB_LOSS:
+                        wdlStr = "LOSS";
+                        break;
+
+                    default:
+                        wdlStr = "N/A";
+                        break;
+                }
+
+                uint dtz = Fathom.GetDTZ(res);
+
+                String promoteStr;
+                switch (promote)
+                {
+                    case Fathom.TB_PROMOTES_NONE:
+                        promoteStr = "nope";
+                        break;
+
+                    case Fathom.TB_PROMOTES_ROOK:
+                        promoteStr = "ROOK";
+                        break;
+
+                    case Fathom.TB_PROMOTES_KNIGHT:
+                        promoteStr = "KNIGHT";
+                        break;
+
+                    case Fathom.TB_PROMOTES_BISHOP:
+                        promoteStr = "BISHOP";
+                        break;
+
+                    case Fathom.TB_PROMOTES_QUEEN:
+                        promoteStr = "QUEEN";
+                        break;
+
+                    default:
+                        promoteStr = "N/A";
+                        break;
+                }
+
+                Console.Out.WriteLine(
+                    "Status: " + status + "\n" +
+                    "WDL: " + wdlStr + ", DTZ: " + dtz + "\n" +
+                    "ply: " + ply.ToString + "\n" +
+                    "promote: " + promoteStr + "\n" +
+                    "ep: " + ep + "\n"
+                );
             }
-
-            Console.Out.WriteLine(
-                "Status: " + status + "\n" +
-                "WDL: " + wdlStr + ", DTZ: " + dtz + "\n" +
-                "ply: " + ply.ToString + "\n" +
-                "promote: " + promoteStr + "\n" +
-                "ep: " + ep + "\n"
-            );
 
             return ply;
         }

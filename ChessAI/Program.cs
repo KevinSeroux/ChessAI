@@ -19,8 +19,7 @@ namespace ChessAI
             board = new Chessboard();
             Syzygy tableReader = new Syzygy(board, "data");
             Evaluator evaluator = new Evaluator(board);
-            Ruler ruler = new Ruler(board);
-            strategist = new Strategist(board, evaluator, ruler, tableReader);
+            strategist = new Strategist(board, evaluator, tableReader);
         }
 
         static void Main(string[] args)

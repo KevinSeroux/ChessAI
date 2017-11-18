@@ -28,11 +28,11 @@ namespace ChessAI
         private Ruler ruler;
         private Stopwatch watch;
 
-        public Strategist(Chessboard board, Evaluator evaluator, Ruler ruler, Syzygy tableReader)
+        public Strategist(Chessboard board, Evaluator evaluator, Syzygy tableReader)
         {
             this.board = board;
             this.evaluator = evaluator;
-            this.ruler = ruler;
+            this.ruler = new Ruler(board);
             this.tableReader = tableReader;
             this.watch = new Stopwatch();
         }
