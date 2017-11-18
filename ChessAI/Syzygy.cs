@@ -1,19 +1,11 @@
 ﻿using System;
+using static ChessAI.Evaluator;
 
 namespace ChessAI
 {
     class SyzygyLoadException : Exception
     {
         public SyzygyLoadException(String msg) : base(msg) {}
-    }
-
-    enum WDL
-    {
-        WIN = 4,
-        CURSED_WIN = 3,
-        DRAW = 2,
-        BLESSED_LOSS = 1,
-        LOSS = 0
     }
 
     class Syzygy

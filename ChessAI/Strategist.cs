@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using static ChessAI.Evaluator;
 
 namespace ChessAI
 {
@@ -78,11 +79,13 @@ namespace ChessAI
         {
             board.Push(parentPly);
 
-            WDL? wdl = tableReader.getWDL();
-            int? best = evaluator.EvaluateWDL(wdl);
+            int best;
 
-            // The player is sure to win so no need to explore deeper
-            if (wdl == null)
+            WDL? wdl = tableReader.getWDL();
+            if (wdl.HasValue)
+                best = evaluator.EvaluateWDL(wdl.Value);
+
+            else // We need to explore only if the end game is unknown
             {
                 best = int.MinValue;
 
@@ -101,7 +104,7 @@ namespace ChessAI
 
             board.Pop();
 
-            return best.Value;
+            return best;
         }
     }
 }
