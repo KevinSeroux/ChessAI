@@ -23,7 +23,7 @@ namespace ChessAI
         }
 
         private Chessboard board;
-        private Syzygy tableReader; //Make use of WDL
+        private Syzygy tableReader;
         private Stopwatch watch;
 
         public Strategist(Chessboard board, Syzygy tableReader)
@@ -31,18 +31,6 @@ namespace ChessAI
             this.board = board;
             this.tableReader = tableReader;
             this.watch = new Stopwatch();
-        }
-
-        //TODO
-        public ICollection<Ply> GetPossiblePlies()
-        {
-            return new HashSet<Ply>();
-        }
-
-        //TODO
-        public int Evaluate()
-        {
-            return (new Random()).Next();
         }
 
         public Ply Run()
@@ -86,22 +74,45 @@ namespace ChessAI
         {
             board.Push(parentPly);
 
-            int best = int.MinValue;
-            if (depth == 0)
-                best = Evaluate();
+            int best;
+
+            WDL? wdl = tableReader.getWDL();
+            // The player is sure to win so no need to explore deeper
+            if (wdl != null && wdl >= WDL.CURSED_WIN)
+                best = int.MaxValue;
+
             else
             {
-                foreach (Ply ply in GetPossiblePlies())
+                best = int.MinValue;
+
+                if (depth == 0)
+                    best = Evaluate();
+                else
                 {
-                    int score = -RecursiveNegaMax(depth - 1, ply);
-                    if (score > best)
-                        best = score;
+                    foreach (Ply ply in GetPossiblePlies())
+                    {
+                        int score = -RecursiveNegaMax(depth - 1, ply);
+                        if (score > best)
+                            best = score;
+                    }
                 }
-            }
+            }            
 
             board.Pop();
 
             return best;
+        }
+
+        //TODO
+        private ICollection<Ply> GetPossiblePlies()
+        {
+            return new HashSet<Ply>();
+        }
+
+        //TODO
+        private int Evaluate()
+        {
+            return (new Random()).Next();
         }
     }
 }
