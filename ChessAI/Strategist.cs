@@ -11,18 +11,6 @@ namespace ChessAI
     //TODO NegaScout
     class Strategist
     {
-        private struct MoveScore
-        {
-            public Ply ply;
-            public int score;
-
-            public MoveScore(Ply ply, int score)
-            {
-                this.ply = ply;
-                this.score = score;
-            }
-        }
-
         private Chessboard board;
         private Syzygy tableReader;
         private Evaluator evaluator;
@@ -61,18 +49,20 @@ namespace ChessAI
         {
             Debug.Assert(depth >= 2);
 
-            MoveScore best = new MoveScore(null, int.MinValue);
+            Ply bestPly = null;
+            int bestScore = int.MinValue;
+            
             foreach (Ply ply in ruler.GetPossiblePlies())
             {
                 int score = -RecursiveNegaMax(depth - 1, ply);
-                if (score > best.score)
+                if (score > bestScore)
                 {
-                    best.ply = ply;
-                    best.score = score;
+                    bestPly = ply;
+                    bestScore = score;
                 }
             }
 
-            return best.ply;
+            return bestPly;
         }
 
         private int RecursiveNegaMax(uint depth, Ply parentPly)
