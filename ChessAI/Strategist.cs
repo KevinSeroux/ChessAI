@@ -35,12 +35,12 @@ namespace ChessAI
             if (ply == null) // No results
             {
                 // Iterative deepening search
-                for (uint depth = 2; watch.ElapsedMilliseconds < 95; depth++)
+                for (uint depth = 2; watch.ElapsedMilliseconds < 230; depth++)
                     ply = NegaMax(depth);
             }
 
             watch.Stop();
-            Debug.Assert(watch.ElapsedMilliseconds >= 100, "IA took more than 100ms to decide");
+            Debug.Assert(watch.ElapsedMilliseconds >= 250, "IA took more than 250ms to decide");
 
             return ply;
         }
