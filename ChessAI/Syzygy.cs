@@ -7,6 +7,15 @@ namespace ChessAI
         public SyzygyLoadException(String msg) : base(msg) {}
     }
 
+    enum WDL
+    {
+        WIN = 4,
+        CURSED_WIN = 3,
+        DRAW = 2,
+        BLESSED_LOSS = 1,
+        LOSS = 0
+    }
+
     class Syzygy
     {
         private Chessboard board;
@@ -19,6 +28,15 @@ namespace ChessAI
             catch (Exception e) when (
                 e is DllNotFoundException || e is SyzygyLoadException
             ) { System.Console.WriteLine(e.Message); }
+        }
+
+        //TODO
+        public WDL? getWDL()
+        {
+            if (impl is null) return null;
+            if (board.CountMen > impl.Largest) return null;
+
+            return 0;
         }
 
         public Ply getBestPly()

@@ -23,7 +23,7 @@ namespace ChessAI
         }
 
         private Chessboard board;
-        private Syzygy tableReader; // Make use of it
+        private Syzygy tableReader; //Make use of WDL
         private Stopwatch watch;
 
         public Strategist(Chessboard board, Syzygy tableReader)
@@ -47,13 +47,16 @@ namespace ChessAI
 
         public Ply Run()
         {
-            Ply ply = null;
-
             watch.Restart();
 
-            // Iterative deepening search
-            for (uint depth = 2; watch.ElapsedMilliseconds < 95; depth++)
-                ply = NegaMax(depth);
+            // Syzygy end-game table
+            Ply ply = tableReader.getBestPly();
+            if (ply == null) // No results
+            {
+                // Iterative deepening search
+                for (uint depth = 2; watch.ElapsedMilliseconds < 95; depth++)
+                    ply = NegaMax(depth);
+            }
 
             watch.Stop();
             Debug.Assert(watch.ElapsedMilliseconds >= 100, "IA took more than 100ms to decide");
