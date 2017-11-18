@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
+using System.Diagnostics;
 
-namespace processAI2
+namespace ChessAI
 {
     class Program
     {
@@ -15,6 +14,15 @@ namespace processAI2
         {
             try
             {
+                Chessboard board = new Chessboard();
+                Syzygy tableReader = new Syzygy(board, "data");
+
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                tableReader.getBestPly();
+                sw.Stop();
+                Console.Out.WriteLine("Probe time: {0} ms\n", sw.ElapsedMilliseconds);
+
                 bool stop = false;
                 int[] tabVal = new int[64];
                 String value;
@@ -49,6 +57,7 @@ namespace processAI2
                                 if (value == "stop") stop = true;
                                 else
                                 {
+                                    Console.WriteLine(value);
                                     String[] substrings = value.Split(',');
                                     for (int i = 0; i < substrings.Length; i++)
                                     {
