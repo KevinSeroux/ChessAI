@@ -15,13 +15,7 @@ namespace ChessAI
             try
             {
                 Chessboard board = new Chessboard();
-                Syzygy tableReader = new Syzygy(board, "data");
-
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-                tableReader.getBestPly();
-                sw.Stop();
-                Console.Out.WriteLine("Probe time: {0} ms\n", sw.ElapsedMilliseconds);
+                Strategist strategist = new Strategist(board, new Syzygy(board, "data"));
 
                 bool stop = false;
                 int[] tabVal = new int[64];

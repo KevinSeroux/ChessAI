@@ -1,5 +1,6 @@
 ﻿namespace ChessAI
 {
+    // TODO: Reset the chessboard when resetting all the positions
     class Chessboard
     {
         public uint CountMen
@@ -13,6 +14,11 @@
         }
 
         public void Pop()
+        {
+
+        }
+
+        public void PopAll()
         {
 
         }

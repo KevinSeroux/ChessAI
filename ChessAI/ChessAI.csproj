@@ -61,6 +61,7 @@
     <Compile Include="Chessboard.cs" />
     <Compile Include="Fathom.cs" />
     <Compile Include="Ply.cs" />
+    <Compile Include="Strategist.cs" />
     <Compile Include="Syzygy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
