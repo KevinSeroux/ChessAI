@@ -93,7 +93,7 @@ namespace ChessAI
             uint promote = Fathom.GetPromotes(res);
             uint from = Fathom.GetFrom(res);
             uint to = Fathom.GetTo(res);
-            Ply ply = new Ply(from, to);
+            Ply ply = Ply.Position(from, to);
 
             // From here, it is just printf debugging
             {
@@ -174,7 +174,7 @@ namespace ChessAI
                 Console.Out.WriteLine(
                     "Status: " + status + "\n" +
                     "WDL: " + wdlStr + ", DTZ: " + dtz + "\n" +
-                    "ply: " + ply.ToString + "\n" +
+                    "ply: " + ply.ToString() + "\n" +
                     "promote: " + promoteStr + "\n" +
                     "ep: " + ep + "\n"
                 );

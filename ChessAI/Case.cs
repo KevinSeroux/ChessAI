@@ -17,6 +17,9 @@ namespace ChessAI
             file = (char)('a' + (pos % 8));
         }
 
-        public new String ToString => file + rank.ToString();
+        public override String ToString()
+        {
+            return file + rank.ToString();
+        }
     }
 }
