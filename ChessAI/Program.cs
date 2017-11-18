@@ -10,12 +10,24 @@ namespace ChessAI
 {
     class Program
     {
+        private static Chessboard board;
+        private static Strategist strategist;
+
+        static void Init()
+        {
+            // Dependencies injection
+            board = new Chessboard();
+            Syzygy tableReader = new Syzygy(board, "data");
+            Evaluator evaluator = new Evaluator(board);
+            Ruler ruler = new Ruler(board);
+            strategist = new Strategist(board, evaluator, ruler, tableReader);
+        }
+
         static void Main(string[] args)
         {
             try
             {
-                Chessboard board = new Chessboard();
-                Strategist strategist = new Strategist(board, new Syzygy(board, "data"));
+                Init();
 
                 bool stop = false;
                 int[] tabVal = new int[64];

@@ -59,8 +59,10 @@
     <Compile Include="Bitboard.cs" />
     <Compile Include="Case.cs" />
     <Compile Include="Chessboard.cs" />
+    <Compile Include="Evaluator.cs" />
     <Compile Include="Fathom.cs" />
     <Compile Include="Ply.cs" />
+    <Compile Include="Ruler.cs" />
     <Compile Include="Strategist.cs" />
     <Compile Include="Syzygy.cs" />
     <Compile Include="Program.cs" />

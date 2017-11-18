@@ -24,11 +24,15 @@ namespace ChessAI
 
         private Chessboard board;
         private Syzygy tableReader;
+        private Evaluator evaluator;
+        private Ruler ruler;
         private Stopwatch watch;
 
-        public Strategist(Chessboard board, Syzygy tableReader)
+        public Strategist(Chessboard board, Evaluator evaluator, Ruler ruler, Syzygy tableReader)
         {
             this.board = board;
+            this.evaluator = evaluator;
+            this.ruler = ruler;
             this.tableReader = tableReader;
             this.watch = new Stopwatch();
         }
@@ -57,7 +61,7 @@ namespace ChessAI
             Debug.Assert(depth >= 2);
 
             MoveScore best = new MoveScore(null, int.MinValue);
-            foreach (Ply ply in GetPossiblePlies())
+            foreach (Ply ply in ruler.GetPossiblePlies())
             {
                 int score = -RecursiveNegaMax(depth - 1, ply);
                 if (score > best.score)
@@ -74,22 +78,19 @@ namespace ChessAI
         {
             board.Push(parentPly);
 
-            int best;
-
             WDL? wdl = tableReader.getWDL();
-            // The player is sure to win so no need to explore deeper
-            if (wdl != null && wdl >= WDL.CURSED_WIN)
-                best = int.MaxValue;
+            int? best = evaluator.EvaluateWDL(wdl);
 
-            else
+            // The player is sure to win so no need to explore deeper
+            if (wdl == null)
             {
                 best = int.MinValue;
 
                 if (depth == 0)
-                    best = Evaluate();
+                    best = evaluator.Evaluate();
                 else
                 {
-                    foreach (Ply ply in GetPossiblePlies())
+                    foreach (Ply ply in ruler.GetPossiblePlies())
                     {
                         int score = -RecursiveNegaMax(depth - 1, ply);
                         if (score > best)
@@ -100,19 +101,7 @@ namespace ChessAI
 
             board.Pop();
 
-            return best;
-        }
-
-        //TODO
-        private ICollection<Ply> GetPossiblePlies()
-        {
-            return new HashSet<Ply>();
-        }
-
-        //TODO
-        private int Evaluate()
-        {
-            return (new Random()).Next();
+            return best.Value;
         }
     }
 }
