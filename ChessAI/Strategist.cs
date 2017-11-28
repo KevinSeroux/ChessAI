@@ -102,5 +102,58 @@ namespace ChessAI
 
             return best;
         }
+
+        //private Ply NegaScout(uint depth)
+        //{
+        //    Debug.Assert(depth >= 2);
+
+        //    Ply bestPly = null;
+        //    int bestScore = int.MinValue;
+
+        //    foreach (Ply ply in ruler.GetPossiblePlies())
+        //    {
+        //        int score = -RecursiveNegaScout(depth - 1, ply);
+        //        if (score > bestScore)
+        //        {
+        //            bestPly = ply;
+        //            bestScore = score;
+        //        }
+        //    }
+
+        //    return bestPly;
+        //}
+
+        //private int RecursiveNegaScout(uint depth, Ply parentPly)
+        //{
+        //    board.Push(parentPly);
+
+        //    int best;
+
+        //    WDL? wdl = tableReader.getWDL();
+        //    if (wdl.HasValue)
+        //        best = evaluator.EvaluateWDL(wdl.Value);
+
+        //    else // We need to explore only if the end game is unknown
+        //    {
+        //        best = int.MinValue;
+
+        //        if (depth == 0)
+        //            best = evaluator.Evaluate();
+        //        else
+        //        {
+        //            foreach (Ply ply in ruler.GetPossiblePlies())
+        //            {
+        //                int score = -RecursiveNegaScout(depth - 1, ply);
+        //                if (score > best)
+        //                    best = score;
+        //            }
+        //        }
+        //    }
+
+        //    board.Pop();
+
+        //    return best;
+        //}
+    
     }
 }
