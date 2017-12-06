@@ -38,12 +38,19 @@ namespace ChessAI
                 return;
             }
 
-            String agentColor;
+            Color agentColor;
+            String fileSuffix;
 
             if (args[0] == "white")
-                agentColor = "AI1";
+            {
+                fileSuffix = "AI1";
+                agentColor = Color.WHITE;
+            }
             else if (args[0] == "black")
-                agentColor = "AI2";
+            {
+                fileSuffix = "AI2";
+                agentColor = Color.BLACK;
+            }
             else
             {
                 Console.WriteLine("\'" + args[0] + "\' argument is unknown.");
@@ -65,10 +72,10 @@ namespace ChessAI
                 {
                     using (var mmf = MemoryMappedFile.OpenExisting("plateau"))
                     {
-                        using (var mmf2 = MemoryMappedFile.OpenExisting("rep" + agentColor))
+                        using (var mmf2 = MemoryMappedFile.OpenExisting("rep" + fileSuffix))
                         {
-                            Mutex mutexStartAI = Mutex.OpenExisting("mutexStart" + agentColor);
-                            Mutex mutexAI = Mutex.OpenExisting("mutex" + agentColor);
+                            Mutex mutexStartAI = Mutex.OpenExisting("mutexStart" + fileSuffix);
+                            Mutex mutexAI = Mutex.OpenExisting("mutex" + fileSuffix);
                             mutexAI.WaitOne();
                             mutexStartAI.WaitOne();
 
@@ -96,7 +103,7 @@ namespace ChessAI
                                 /***************************************** ECRIRE LE CODE DE L'IA *************************************/
                                 /******************************************************************************************************/
 
-                                board.SetFromPlatformRepresentation(tabVal);
+                                board.ResetFromPlatformRepresentation(tabVal, agentColor);
                                 Ply ply = strategist.Run();
                                 value = ply.ToString();
 

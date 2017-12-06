@@ -2,11 +2,11 @@
 
 namespace ChessAI
 {
+    public enum Color { WHITE, BLACK };
+
     // TODO: Reset the chessboard when resetting all the positions
     class Chessboard
     {
-       public enum Color { WHITE, BLACK };
-
         private Mailbox pos;
         private Stack<Mailbox> stack;
 
@@ -68,20 +68,16 @@ namespace ChessAI
         }
 
         //TODO
-        public void SetFromPlatformRepresentation(int[] tabVal)
+        public void ResetFromPlatformRepresentation(int[] tabVal, Color agentColor)
         {
-            /* List<String> mesPieces = new List<String>();
-            for (int i = 0; i < tabVal.Length; i++)
+            if (agentColor == Color.WHITE)
             {
-                if (tabVal[i] < 0) mesPieces.Add(tabCoord[i]);
+                //tabVal[i] > 0: own pieces
             }
-
-            List<String> reste = new List<String>();
-            for (int i = 0; i < tabVal.Length; i++)
+            else
             {
-                if (tabVal[i] <= 0) reste.Add(tabCoord[i]);
+                //tabVal[i] < 0: own pieces
             }
-            */
         }
     }
 }
