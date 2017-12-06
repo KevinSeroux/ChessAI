@@ -61,6 +61,7 @@
     <Compile Include="Chessboard.cs" />
     <Compile Include="Evaluator.cs" />
     <Compile Include="Fathom.cs" />
+    <Compile Include="MailboxRepresentation.cs" />
     <Compile Include="Ply.cs" />
     <Compile Include="Ruler.cs" />
     <Compile Include="Strategist.cs" />
