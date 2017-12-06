@@ -2,8 +2,23 @@
 
 namespace ChessAI
 {
-    public enum Color { WHITE, BLACK };
 
+    enum Piece
+    {
+        PAWN = 0,
+        KNIGHT = 1,
+        BISHOP = 2,
+        ROOK = 3,
+        QUEEN = 4,
+        KING = 5
+}
+
+    enum Color
+    {
+        WHITE = -1,
+        BLACK = 1,
+        NONE = 6
+    }
     // TODO: Reset the chessboard when resetting all the positions
     class Chessboard
     {
@@ -25,8 +40,14 @@ namespace ChessAI
             // Backup the current chessboard
             stack.Push(pos);
 
+            //Copy of pos
+            Mailbox mailbox = new Mailbox(pos);
+            mailbox.ply(ply);
+            pos = mailbox;
+
             //TODO; Here apply the ply
             //...
+
         }
 
         // Cancel the previous ply

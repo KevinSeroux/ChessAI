@@ -24,42 +24,53 @@ namespace ChessAI
             this.board = board;
         }
 
-        //TODO
+        //TODO Ameliorer en prenant en compte les pawn doubled/blocked/isolated
+        //TODO Ameliorer en prenant en comptre le nombre de coups possibles ?
         public int Evaluate()
         {
             int valeurPiece = 0;
-            int valeurCouverture = 0;
-            int valeurProtection = 0;
-            int valeurAttaque = 0;
+
+
+            int valeurCouvertureW = 0;
+            int valeurProtectionW = 0;
+            int valeurAttaqueW = 0;
+
+            int valeurCouvertureB = 0;
+            int valeurProtectionB = 0;
+            int valeurAttaqueB = 0;
+
 
             int[] color = board.GetMailbox().getColor();
             int[] piece = board.GetMailbox().getPiece();
-            int side = board.GetMailbox().getSideToPlay();
-            int xside = board.GetMailbox().getSideToPlay();
+            int side = (int)board.GetMailbox().getSideToPlay();
+            int xside = (int)board.GetMailbox().getSideToPlay();
+
 
             for (int i = 0; i < 64; ++i)
             { /* loop over all squares (no piece list) */
-                if (color[i] == side)
-                { /* looking for own pieces and pawns to move */
                     int p = piece[i];
-                    if (p != Mailbox.PAWN)
+
+                    if (p != (int)Piece.PAWN)
                     {
-                        switch (piece[i])
+                        switch ((Piece)piece[i])
                         {
-                            case Mailbox.KNIGHT:
-                                valeurPiece += 3;
+                            case Piece.KNIGHT:
+                                valeurPiece += 3 * color[i];
                                 break;
-                            case Mailbox.BISHOP:
-                                valeurPiece += 3;
+                            case Piece.BISHOP:
+                                valeurPiece += 3 * color[i];
                                 break;
-                            case Mailbox.ROOK:
-                                valeurPiece += 3;
+                            case Piece.ROOK:
+                                valeurPiece += 3 * color[i];
                                 break;
-                            case Mailbox.QUEEN:
-                                valeurPiece += 10;
+                            case Piece.QUEEN:
+                                valeurPiece += 10 * color[i];
+                                break;
+                            case Piece.KING:
+                                valeurPiece += 200 * color[i];
                                 break;
 
-                        }
+                    }
                         /* piece or pawn */
                         for (int j = 0; j < Mailbox.offsets[p]; ++j)
                         { /* for all knight or ray directions */
@@ -67,62 +78,71 @@ namespace ChessAI
                             { /* starting with from square */
                                 n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[p, j]]; /* next square along the ray j */
                                 if (n == -1) break; /* outside board */
-                                if (color[n] != Mailbox.EMPTY)
+
+                                if (color[n] != (int)Color.NONE)
                                 {
-                                    if (color[n] == xside)
-                                        valeurAttaque++; /* capture from i to n */ //----------------------------------------------------- < attaque possible
-                                    else
-                                    {
-                                        valeurProtection++;//--------------------------------------------------------------------------------------------------< protection
-                                    }
+                                    if (color[n] == xside && xside == (int)Color.BLACK)
+                                        valeurAttaqueW++; /* capture from i to n */ //----------------------------------------------------- < attaque possible
+                                    else if (color[n] == xside && xside == (int)Color.WHITE)
+                                        valeurAttaqueB++;
+                                    if (color[n] == side && side == (int)Color.WHITE)
+                                        valeurProtectionW++;
+                                    else if (color[n] == side && side == (int)Color.BLACK)
+                                        valeurProtectionB++;
+
+                             
                                     break;
                                 }
-                                valeurCouverture++; /* quiet move from i to n */ //------------------------------------------------------------< deplacement possible
-                                if (!Mailbox.slide[p]) break; /* next direction */
+
+                            if (color[i] == (int)Color.WHITE)
+                                valeurCouvertureW++; /* quiet move from i to n */ //------------------------------------------------------------< deplacement possible
+                            else valeurCouvertureB++;
+
+                            if (!Mailbox.slide[p]) break; /* next direction */
                             }
                         }
                     }
                     else
                     {
-                        valeurPiece += 3;
+                        valeurPiece += 3 * color[i];
                         // -------------------------------- Les "en passant" ne sont pas pris en charge encore ------------------------------
                         /* pawn moves */
-                        if (side == Mailbox.LIGHT)
+                        if (side == (int)Color.WHITE)
                         {
                             //Double "saut"
                             if (Mailbox.tabPos[i] <= 88 && Mailbox.tabPos[i] >= 81)
                             {
-                                if (color[i + Mailbox.MMPAWN[3]] == Mailbox.EMPTY)
+                                if (color[i + Mailbox.MMPAWN[3]] == (int)Color.NONE)
                                 {
-                                    valeurCouverture++;
+                                    valeurCouvertureW++;
                                 }
                             }
 
                             //Avancer
-                            if (color[i + Mailbox.MMPAWN[0]] == Mailbox.EMPTY)
-                            {
-                                valeurCouverture++;
+                            if (color[i + Mailbox.MMPAWN[0]] == (int)Color.NONE)
+                        {
+                            valeurCouvertureW++;
                             }
 
 
                             //Manger Gauche
-                            if (color[i + Mailbox.MMPAWN[1]] == Mailbox.DARK)
+                            if (color[i + Mailbox.MMPAWN[1]] == (int)Color.BLACK)
                             {
-                                valeurAttaque++;
+                                valeurAttaqueW++;
                             }
-                            else if (color[i + Mailbox.MMPAWN[1]] == Mailbox.LIGHT)
+                            else if (color[i + Mailbox.MMPAWN[1]] == (int)Color.WHITE)
                             {
-                                valeurProtection++;
+                                valeurProtectionW++;
                             }
 
                             //Manger droite
-                            if (color[i + Mailbox.MMPAWN[2]] == Mailbox.DARK)
+                            if (color[i + Mailbox.MMPAWN[2]] == (int)Color.BLACK)
                             {
-                                valeurAttaque++;
+                                valeurAttaqueW++;
                             }
-                            else if (color[i + Mailbox.MMPAWN[2]] == Mailbox.LIGHT)
+                            else if (color[i + Mailbox.MMPAWN[2]] == (int)Color.WHITE)
                             {
-                                valeurProtection++;
+                                valeurProtectionW++;
                             }
 
                         }
@@ -131,43 +151,48 @@ namespace ChessAI
                             //Double "saut"
                             if (Mailbox.tabPos[i] >= 31 && Mailbox.tabPos[i] <= 38)
                             {
-                                if (color[i - Mailbox.MMPAWN[3]] == Mailbox.EMPTY)
+                                if (color[i - Mailbox.MMPAWN[3]] == (int)Color.NONE)
                                 {
-                                    valeurCouverture++;
+                                    valeurCouvertureB++;
                                 }
                             }
 
                             //Avancer
-                            if (color[i - Mailbox.MMPAWN[0]] == Mailbox.EMPTY)
+                            if (color[i - Mailbox.MMPAWN[0]] == (int)Color.NONE)
                             {
-                                valeurCouverture++;
+                                valeurCouvertureB++;
                             }
 
                             //Manger Gauche
-                            if (color[i - Mailbox.MMPAWN[1]] == Mailbox.LIGHT)
+                            if (color[i - Mailbox.MMPAWN[1]] == (int)Color.WHITE)
                             {
-                                valeurAttaque++;
+                                valeurAttaqueB++;
                             }
-                            else if (color[i - Mailbox.MMPAWN[1]] == Mailbox.DARK)
+                            else if (color[i - Mailbox.MMPAWN[1]] == (int)Color.BLACK)
                             {
-                                valeurProtection++;
+                                valeurProtectionB++;
                             }
 
                             //Manger droite
-                            if (color[i - Mailbox.MMPAWN[2]] == Mailbox.LIGHT)
+                            if (color[i - Mailbox.MMPAWN[2]] == (int)Color.WHITE)
                             {
-                                valeurAttaque++;
+                                valeurAttaqueB++;
                             }
-                            else if (color[i - Mailbox.MMPAWN[2]] == Mailbox.DARK)
+                            else if (color[i - Mailbox.MMPAWN[2]] == (int)Color.BLACK)
                             {
-                                valeurProtection++;
+                                valeurProtectionB++;
                             }
                         }
                     }
-                }
+                
             }
 
-            return valeurAttaque + valeurCouverture + valeurPiece + valeurProtection;
+            int mobilite = valeurCouvertureB - valeurCouvertureW; //TODO ajouter un poids ici
+            int protection = valeurProtectionB - valeurProtectionW; //TODO same
+            int attaque = valeurAttaqueB - valeurAttaqueW; //TODO same
+
+            return (valeurPiece + mobilite + protection + attaque) * side;
+            //return valeurAttaqueW + valeurCouvertureW + valeurPiece + valeurProtectionW;
             //return (new Random()).Next();
         }
 
@@ -175,5 +200,8 @@ namespace ChessAI
         {
             return Convert.ToInt32(wdl);
         }
+
+
+
     }
 }
