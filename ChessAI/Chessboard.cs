@@ -5,14 +5,12 @@ namespace ChessAI
     // TODO: Reset the chessboard when resetting all the positions
     class Chessboard
     {
-        // TODO: Replace both "object" by chessboard representation
-        private object pos;
-        private Stack<object> stack;
-
+        private Mailbox pos;
+        private Stack<Mailbox> stack;
 
         public Chessboard()
         {
-            stack = new Stack<object>();
+            stack = new Stack<Mailbox>();
         }
 
         public uint CountMen
@@ -42,6 +40,7 @@ namespace ChessAI
             Pop();
         }
 
+        // TODO
         public Bitboard ToBitboard()
         {
             Bitboard board = new Bitboard();
@@ -61,14 +60,26 @@ namespace ChessAI
             return board;
         }
 
-        public MailboxRepresentation GetMailboxRepresentation()
+        public Mailbox GetMailbox()
         {
-            return (MailboxRepresentation)pos;
+            return pos;
         }
 
-        
+        //TODO
+        public void SetFromPlatformRepresentation(int[] tabVal)
+        {
+            /* List<String> mesPieces = new List<String>();
+            for (int i = 0; i < tabVal.Length; i++)
+            {
+                if (tabVal[i] < 0) mesPieces.Add(tabCoord[i]);
+            }
 
-       
-
+            List<String> reste = new List<String>();
+            for (int i = 0; i < tabVal.Length; i++)
+            {
+                if (tabVal[i] <= 0) reste.Add(tabCoord[i]);
+            }
+            */
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAI
 {
-    class MailboxRepresentation
+    class Mailbox
     {
         public const int LIGHT = 0;
         public const int DARK = 1;
@@ -105,7 +105,7 @@ namespace ChessAI
 
 
 
-        public MailboxRepresentation()
+        public Mailbox()
         {
             side = LIGHT;
             xside = DARK;

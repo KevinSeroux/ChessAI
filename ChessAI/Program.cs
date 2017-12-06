@@ -76,24 +76,9 @@ namespace ChessAI
                                 /***************************************** ECRIRE LE CODE DE L'IA *************************************/
                                 /******************************************************************************************************/
 
-                                List<String> mesPieces = new List<String>();
-                                for (int i = 0; i < tabVal.Length; i++)
-                                {
-                                    if (tabVal[i] < 0) mesPieces.Add(tabCoord[i]);
-                                }
-
-                                List<String> reste = new List<String>();
-                                for (int i = 0; i < tabVal.Length; i++)
-                                {
-                                    if (tabVal[i] <= 0) reste.Add(tabCoord[i]);
-                                }
-
-                                Random rnd = new Random();
-                                coord[0] = mesPieces[rnd.Next(mesPieces.Count)];
-                                //coord[0] = "petit roque";
-                                coord[1] = tabCoord[rnd.Next(reste.Count)];
-                                //coord[1] = "";
-                                //coord[2] = "";
+                                board.SetFromPlatformRepresentation(tabVal);
+                                Ply ply = strategist.Run();
+                                String strPly = ply.ToString();
 
                                 /********************************************************************************************************/
                                 /********************************************************************************************************/
@@ -101,12 +86,7 @@ namespace ChessAI
 
                                 using (var accessor = mmf2.CreateViewAccessor())
                                 {
-                                    value = coord[0];
-                                    for (int i = 1; i < coord.Length; i++)
-                                    {
-                                        value += "," + coord[i];
-                                    }
-                                    byte[] Buffer = ASCIIEncoding.ASCII.GetBytes(value);
+                                    byte[] Buffer = ASCIIEncoding.ASCII.GetBytes(strPly);
                                     accessor.Write(0, (ushort)Buffer.Length);
                                     accessor.WriteArray(0 + 2, Buffer, 0, Buffer.Length);
                                 }
