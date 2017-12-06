@@ -23,27 +23,12 @@ namespace ChessAI
 
         public readonly static bool[] slide = { false, false, true, true, true, false };
 
-        int[] color = {   1, 1, 1, 1, 1, 1, 1, 1,
-                        1, 1, 1, 1, 1, 1, 1, 1,
-                        6, 6, 6, 6, 6, 6, 6, 6,
-                        6, 6, 6, 6, 6, 6, 6, 6,
-                        6, 6, 6, 6, 6, 6, 6, 6,
-                        6, 6, 6, 6, 6, 6, 6, 6,
-                        0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0
-            };// = new int[64]; /* LIGHT, DARK, or EMPTY */
+        int[] color;
+        // = new int[64]; /* LIGHT, DARK, or EMPTY */
 
 
-        int[] piece = {
-                3, 1, 2, 4, 5, 2, 1, 3,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                6, 6, 6, 6, 6, 6, 6, 6,
-                6, 6, 6, 6, 6, 6, 6, 6,
-                6, 6, 6, 6, 6, 6, 6, 6,
-                6, 6, 6, 6, 6, 6, 6, 6,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                3, 1, 2, 4, 5, 2, 1, 3
-            };// = new int[64]; /* PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, or EMPTY */
+        int[] piece;
+        // = new int[64]; /* PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, or EMPTY */
 
         
 
@@ -94,7 +79,8 @@ namespace ChessAI
                             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
-        public readonly static string[] tabCoord =  {  "a8","b8","c8","d8","e8","f8","g8","h8",
+        public readonly static string[] tabCoord =  {
+                                "a8","b8","c8","d8","e8","f8","g8","h8",
                                 "a7","b7","c7","d7","e7","f7","g7","h7",
                                 "a6","b6","c6","d6","e6","f6","g6","h6",
                                 "a5","b5","c5","d5","e5","f5","g5","h5",
@@ -107,6 +93,28 @@ namespace ChessAI
 
         public Mailbox()
         {
+            piece = new int[]{
+                3, 1, 2, 4, 5, 2, 1, 3,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                6, 6, 6, 6, 6, 6, 6, 6,
+                6, 6, 6, 6, 6, 6, 6, 6,
+                6, 6, 6, 6, 6, 6, 6, 6,
+                6, 6, 6, 6, 6, 6, 6, 6,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                3, 1, 2, 4, 5, 2, 1, 3
+            };
+
+            color = new int[] {
+                        1, 1, 1, 1, 1, 1, 1, 1,
+                        1, 1, 1, 1, 1, 1, 1, 1,
+                        6, 6, 6, 6, 6, 6, 6, 6,
+                        6, 6, 6, 6, 6, 6, 6, 6,
+                        6, 6, 6, 6, 6, 6, 6, 6,
+                        6, 6, 6, 6, 6, 6, 6, 6,
+                        0, 0, 0, 0, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0, 0, 0, 0
+            };
+
             side = LIGHT;
             xside = DARK;
         }
@@ -146,6 +154,76 @@ namespace ChessAI
         public int colonne(int index)
         {
             return index & 7;
+        }
+
+        public MailboxRepresentation(MailboxRepresentation m)
+        {
+            this.side = m.side;
+            this.xside = m.xside;
+            this.color = new int[64];
+            this.piece = new int[64];
+
+            Array.Copy(m.piece, piece,64);
+            Array.Copy(m.color, color, 64);
+
+        }
+
+        /*
+         * private bool castlingKingSide;
+        private bool castlingQueenSide;
+        private Case from;
+        private Case to;
+        private Promotion promotion;
+        private Case captureEnPassant;
+        */
+        public void ply(Ply p)
+        {
+            int dep = 0;
+            int arr = 0;
+            
+            //TODO BETTER
+            for(int i = 0; i < tabCoord.Length; i++)
+            {
+                if (p.from.ToString().Equals(tabCoord[i])) dep = i;
+                if (p.to.ToString().Equals(tabCoord[i])) arr = i;
+            }
+
+            color[arr] = color[dep];
+            color[dep] = EMPTY;
+
+            piece[arr] = piece[dep];
+            piece[dep] = EMPTY;
+
+            if(p.captureEnPassant != null)
+            {
+                int caseEnPassant = 0;
+                for (int i = 0; i < tabCoord.Length; i++)
+                {
+                    if (p.captureEnPassant.ToString().Equals(tabCoord[i]))
+                    {
+                        caseEnPassant = i;
+                        break;
+                    }
+                }
+                color[caseEnPassant] = EMPTY;
+                piece[caseEnPassant] = EMPTY;
+            }
+
+            if(p.promotion != null)
+            {
+                piece[arr] = p.promotion.piece;
+            }
+
+            if (p.castlingKingSide)
+            {
+                //TODO -- qqch à faire la ? Vu qu'on a depart et arrivé ?
+            }
+            if (p.castlingQueenSide)
+            {
+                //TODO -- qqch à faire la ? Vu qu'on a depart et arrivé ?
+            }
+
+
         }
     }
 }

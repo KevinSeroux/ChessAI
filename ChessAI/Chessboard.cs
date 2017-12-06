@@ -25,8 +25,14 @@ namespace ChessAI
             // Backup the current chessboard
             stack.Push(pos);
 
+            //Copy of pos
+            MailboxRepresentation mailbox = new MailboxRepresentation((MailboxRepresentation)pos);
+            mailbox.ply(ply);
+            pos = mailbox;
+
             //TODO; Here apply the ply
             //...
+
         }
 
         // Cancel the previous ply

@@ -11,11 +11,13 @@ namespace ChessAI
         // TODO: Not sure for some promotion
         public abstract class Promotion
         {
+            public int piece;
             public abstract override String ToString();
         }
 
         public class QueenPromotion : Promotion
         {
+            public QueenPromotion() { piece = MailboxRepresentation.QUEEN; }
             public override string ToString()
             {
                 return "D";
@@ -24,6 +26,7 @@ namespace ChessAI
 
         public class KnightPromotion : Promotion
         {
+            public KnightPromotion() { piece = MailboxRepresentation.KNIGHT; }
             public override string ToString()
             {
                 return "C";
@@ -32,6 +35,7 @@ namespace ChessAI
 
         public class RookPromotion : Promotion
         {
+            public RookPromotion() { piece = MailboxRepresentation.ROOK; }
             public override string ToString()
             {
                 return "T";
@@ -40,18 +44,22 @@ namespace ChessAI
 
         public class BishopPromotion : Promotion
         {
+            public BishopPromotion() { piece = MailboxRepresentation.BISHOP; }
             public override string ToString()
             {
                 return "F";
             }
         }
 
-        private bool castlingKingSide;
-        private bool castlingQueenSide;
-        private Case from;
-        private Case to;
-        private Promotion promotion;
-        private Case captureEnPassant;
+
+        public bool castlingKingSide { get; private set; }
+        public bool castlingQueenSide { get; private set; }
+        public Case from { get; private set; }
+        public Case to { get; private set; }
+        public Promotion promotion { get; private set; }
+        public Case captureEnPassant { get; private set; }
+
+
 
         private Ply()
         {
