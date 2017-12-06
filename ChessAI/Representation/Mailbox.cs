@@ -8,16 +8,6 @@ namespace ChessAI
 {
     class Mailbox
     {
-        public const int LIGHT = -1;
-        public const int DARK = 1;
-        public const int EMPTY = 6;
-
-        public const int PAWN = 0;
-        public const int KNIGHT = 1;
-        public const int BISHOP = 2;
-        public const int ROOK = 3;
-        public const int QUEEN = 4;
-        public const int KING = 5;
 
         public readonly static int[] offsets = { 0, 8, 4, 4, 8, 8 }; // NB Direction pour chaque pièce
 
@@ -35,8 +25,8 @@ namespace ChessAI
         private uint castle;
         private uint ep;
 
-        int side; // side to move
-        int xside; //side to not move
+        Color side; // side to move
+        Color xside; //side to not move
 
         //representation Max
         public readonly static int[] MMPAWN = { -8, -9, -7, -16 }; //Pion
@@ -115,13 +105,13 @@ namespace ChessAI
                         -1, -1, -1, -1, -1, -1, -1, -1
             };
 
-            side = LIGHT;
-            xside = DARK;
+            side = Color.WHITE;
+            xside = Color.BLACK;
         }
 
         public void changementTour()
         {
-            int tourprecedent = side;
+            Color tourprecedent = side;
             side = xside;
             xside = tourprecedent;
         }
@@ -136,12 +126,12 @@ namespace ChessAI
             return piece;
         }
 
-        public int getSideToPlay()
+        public Color getSideToPlay()
         {
             return side;
         }
 
-        public int getSideNotToPlay()
+        public Color getSideNotToPlay()
         {
             return xside;
         }
@@ -181,6 +171,7 @@ namespace ChessAI
             int dep = 0;
             int arr = 0;
             
+
             //TODO BETTER
             for(int i = 0; i < tabCoord.Length; i++)
             {
@@ -189,10 +180,10 @@ namespace ChessAI
             }
 
             color[arr] = color[dep];
-            color[dep] = EMPTY;
+            color[dep] = (int)Color.NONE;
 
             piece[arr] = piece[dep];
-            piece[dep] = EMPTY;
+            piece[dep] = (int)Color.NONE;
 
             if(p.captureEnPassant != null)
             {
@@ -205,8 +196,8 @@ namespace ChessAI
                         break;
                     }
                 }
-                color[caseEnPassant] = EMPTY;
-                piece[caseEnPassant] = EMPTY;
+                color[caseEnPassant] = (int)Color.NONE;
+                piece[caseEnPassant] = (int)Color.NONE;
             }
 
             if(p.promotion != null)
