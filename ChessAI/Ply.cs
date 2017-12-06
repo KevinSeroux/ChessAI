@@ -17,7 +17,7 @@ namespace ChessAI
 
         public class QueenPromotion : Promotion
         {
-            public QueenPromotion() { piece = MailboxRepresentation.QUEEN; }
+            public QueenPromotion() { piece = Mailbox.QUEEN; }
             public override string ToString()
             {
                 return "D";
@@ -26,7 +26,7 @@ namespace ChessAI
 
         public class KnightPromotion : Promotion
         {
-            public KnightPromotion() { piece = MailboxRepresentation.KNIGHT; }
+            public KnightPromotion() { piece = Mailbox.KNIGHT; }
             public override string ToString()
             {
                 return "C";
@@ -35,7 +35,7 @@ namespace ChessAI
 
         public class RookPromotion : Promotion
         {
-            public RookPromotion() { piece = MailboxRepresentation.ROOK; }
+            public RookPromotion() { piece = Mailbox.ROOK; }
             public override string ToString()
             {
                 return "T";
@@ -44,7 +44,7 @@ namespace ChessAI
 
         public class BishopPromotion : Promotion
         {
-            public BishopPromotion() { piece = MailboxRepresentation.BISHOP; }
+            public BishopPromotion() { piece = Mailbox.BISHOP; }
             public override string ToString()
             {
                 return "F";

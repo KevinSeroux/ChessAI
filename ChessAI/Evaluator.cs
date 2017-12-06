@@ -28,9 +28,15 @@ namespace ChessAI
         public int Evaluate()
         {
             int valeurPiece = 0;
-            int valeurCouverture = 0;
-            int valeurProtection = 0;
-            int valeurAttaque = 0;
+
+
+            int valeurCouvertureW = 0;
+            int valeurProtectionW = 0;
+            int valeurAttaqueW = 0;
+
+            int valeurCouvertureB = 0;
+            int valeurProtectionB = 0;
+            int valeurAttaqueB = 0;
 
             int[] color = board.GetMailbox().getColor();
             int[] piece = board.GetMailbox().getPiece();
@@ -39,27 +45,28 @@ namespace ChessAI
 
             for (int i = 0; i < 64; ++i)
             { /* loop over all squares (no piece list) */
-                if (color[i] == side)
-                { /* looking for own pieces and pawns to move */
                     int p = piece[i];
                     if (p != Mailbox.PAWN)
                     {
                         switch (piece[i])
                         {
                             case Mailbox.KNIGHT:
-                                valeurPiece += 3;
+                                valeurPiece += 3 * color[i];
                                 break;
                             case Mailbox.BISHOP:
-                                valeurPiece += 3;
+                                valeurPiece += 3 * color[i];
                                 break;
                             case Mailbox.ROOK:
-                                valeurPiece += 3;
+                                valeurPiece += 3 * color[i];
                                 break;
                             case Mailbox.QUEEN:
-                                valeurPiece += 10;
+                                valeurPiece += 10 * color[i];
+                                break;
+                            case Mailbox.KING:
+                                valeurPiece += 200 * color[i];
                                 break;
 
-                        }
+                    }
                         /* piece or pawn */
                         for (int j = 0; j < Mailbox.offsets[p]; ++j)
                         { /* for all knight or ray directions */
@@ -69,22 +76,30 @@ namespace ChessAI
                                 if (n == -1) break; /* outside board */
                                 if (color[n] != Mailbox.EMPTY)
                                 {
-                                    if (color[n] == xside)
-                                        valeurAttaque++; /* capture from i to n */ //----------------------------------------------------- < attaque possible
-                                    else
-                                    {
-                                        valeurProtection++;//--------------------------------------------------------------------------------------------------< protection
-                                    }
+                                    if (color[n] == xside && xside == Mailbox.DARK)
+                                        valeurAttaqueW++; /* capture from i to n */ //----------------------------------------------------- < attaque possible
+                                    else if (color[n] == xside && xside == Mailbox.LIGHT)
+                                        valeurAttaqueB++;
+                                    if (color[n] == side && side == Mailbox.LIGHT)
+                                        valeurProtectionW++;
+                                    else if (color[n] == side && side == Mailbox.DARK)
+                                        valeurProtectionB++;
+
+                             
                                     break;
                                 }
-                                valeurCouverture++; /* quiet move from i to n */ //------------------------------------------------------------< deplacement possible
-                                if (!Mailbox.slide[p]) break; /* next direction */
+
+                            if (color[i] == Mailbox.LIGHT)
+                                valeurCouvertureW++; /* quiet move from i to n */ //------------------------------------------------------------< deplacement possible
+                            else valeurCouvertureB++;
+
+                            if (!Mailbox.slide[p]) break; /* next direction */
                             }
                         }
                     }
                     else
                     {
-                        valeurPiece += 3;
+                        valeurPiece += 3 * color[i];
                         // -------------------------------- Les "en passant" ne sont pas pris en charge encore ------------------------------
                         /* pawn moves */
                         if (side == Mailbox.LIGHT)
@@ -94,35 +109,35 @@ namespace ChessAI
                             {
                                 if (color[i + Mailbox.MMPAWN[3]] == Mailbox.EMPTY)
                                 {
-                                    valeurCouverture++;
+                                    valeurCouvertureW++;
                                 }
                             }
 
                             //Avancer
                             if (color[i + Mailbox.MMPAWN[0]] == Mailbox.EMPTY)
                             {
-                                valeurCouverture++;
+                                valeurCouvertureW++;
                             }
 
 
                             //Manger Gauche
                             if (color[i + Mailbox.MMPAWN[1]] == Mailbox.DARK)
                             {
-                                valeurAttaque++;
+                                valeurAttaqueW++;
                             }
                             else if (color[i + Mailbox.MMPAWN[1]] == Mailbox.LIGHT)
                             {
-                                valeurProtection++;
+                                valeurProtectionW++;
                             }
 
                             //Manger droite
                             if (color[i + Mailbox.MMPAWN[2]] == Mailbox.DARK)
                             {
-                                valeurAttaque++;
+                                valeurAttaqueW++;
                             }
                             else if (color[i + Mailbox.MMPAWN[2]] == Mailbox.LIGHT)
                             {
-                                valeurProtection++;
+                                valeurProtectionW++;
                             }
 
                         }
@@ -133,41 +148,46 @@ namespace ChessAI
                             {
                                 if (color[i - Mailbox.MMPAWN[3]] == Mailbox.EMPTY)
                                 {
-                                    valeurCouverture++;
+                                    valeurCouvertureB++;
                                 }
                             }
 
                             //Avancer
                             if (color[i - Mailbox.MMPAWN[0]] == Mailbox.EMPTY)
                             {
-                                valeurCouverture++;
+                                valeurCouvertureB++;
                             }
 
                             //Manger Gauche
                             if (color[i - Mailbox.MMPAWN[1]] == Mailbox.LIGHT)
                             {
-                                valeurAttaque++;
+                                valeurAttaqueB++;
                             }
                             else if (color[i - Mailbox.MMPAWN[1]] == Mailbox.DARK)
                             {
-                                valeurProtection++;
+                                valeurProtectionB++;
                             }
 
                             //Manger droite
                             if (color[i - Mailbox.MMPAWN[2]] == Mailbox.LIGHT)
                             {
-                                valeurAttaque++;
+                                valeurAttaqueB++;
                             }
                             else if (color[i - Mailbox.MMPAWN[2]] == Mailbox.DARK)
                             {
-                                valeurProtection++;
+                                valeurProtectionB++;
                             }
                         }
                     }
-                }
+                
             }
 
-            return valeurAttaque + valeurCouverture + valeurPiece + valeurProtection;
+            int mobilite = valeurCouvertureB - valeurCouvertureW; //TODO ajouter un poids ici
+            int protection = valeurProtectionB - valeurProtectionW; //TODO same
+            int attaque = valeurAttaqueB - valeurAttaqueW; //TODO same
+
+            return (valeurPiece + mobilite + protection + attaque) * side;
+            //return valeurAttaqueW + valeurCouvertureW + valeurPiece + valeurProtectionW;
             //return (new Random()).Next();
         }
 
@@ -175,5 +195,8 @@ namespace ChessAI
         {
             return Convert.ToInt32(wdl);
         }
+
+
+
     }
 }

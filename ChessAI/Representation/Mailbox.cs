@@ -8,7 +8,7 @@ namespace ChessAI
 {
     class Mailbox
     {
-        public const int LIGHT = 0;
+        public const int LIGHT = -1;
         public const int DARK = 1;
         public const int EMPTY = 6;
 
@@ -111,8 +111,8 @@ namespace ChessAI
                         6, 6, 6, 6, 6, 6, 6, 6,
                         6, 6, 6, 6, 6, 6, 6, 6,
                         6, 6, 6, 6, 6, 6, 6, 6,
-                        0, 0, 0, 0, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0, 0, 0, 0
+                        -1, -1, -1, -1, -1, -1, -1, -1,
+                        -1, -1, -1, -1, -1, -1, -1, -1
             };
 
             side = LIGHT;
@@ -156,7 +156,7 @@ namespace ChessAI
             return index & 7;
         }
 
-        public MailboxRepresentation(MailboxRepresentation m)
+        public Mailbox(Mailbox m)
         {
             this.side = m.side;
             this.xside = m.xside;

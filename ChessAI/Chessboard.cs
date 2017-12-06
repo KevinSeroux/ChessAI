@@ -26,7 +26,7 @@ namespace ChessAI
             stack.Push(pos);
 
             //Copy of pos
-            MailboxRepresentation mailbox = new MailboxRepresentation((MailboxRepresentation)pos);
+            Mailbox mailbox = new Mailbox(pos);
             mailbox.ply(ply);
             pos = mailbox;
 
