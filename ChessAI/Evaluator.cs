@@ -24,7 +24,8 @@ namespace ChessAI
             this.board = board;
         }
 
-        //TODO
+        //TODO Ameliorer en prenant en compte les pawn doubled/blocked/isolated
+        //TODO Ameliorer en prenant en comptre le nombre de coups possibles ?
         public int Evaluate()
         {
             int valeurPiece = 0;
