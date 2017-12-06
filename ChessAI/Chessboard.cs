@@ -9,6 +9,7 @@ namespace ChessAI
         private object pos;
         private Stack<object> stack;
 
+
         public Chessboard()
         {
             stack = new Stack<object>();
@@ -59,5 +60,15 @@ namespace ChessAI
 
             return board;
         }
+
+        public MailboxRepresentation GetMailboxRepresentation()
+        {
+            return (MailboxRepresentation)pos;
+        }
+
+        
+
+       
+
     }
 }

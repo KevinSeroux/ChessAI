@@ -17,6 +17,12 @@ namespace ChessAI
             file = (char)('a' + (pos % 8));
         }
 
+        public Case (String pos)
+        {
+            file = pos[0];
+            rank = (uint)Char.GetNumericValue(pos[1]);
+        }
+
         public override String ToString()
         {
             return file + rank.ToString();
