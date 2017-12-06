@@ -71,10 +71,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="ChessAIBlack.bat">
+    <None Include="ChessAI2Black.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="ChessAIWhite.bat">
+    <None Include="ChessAI1White.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

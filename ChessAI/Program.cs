@@ -38,12 +38,12 @@ namespace ChessAI
                 return;
             }
 
-            Chessboard.Turn turn;
+            String agentColor;
 
             if (args[0] == "white")
-                turn = Chessboard.Turn.WHITE;
+                agentColor = "AI1";
             else if (args[0] == "black")
-                turn = Chessboard.Turn.BLACK;
+                agentColor = "AI2";
             else
             {
                 Console.WriteLine("\'" + args[0] + "\' argument is unknown.");
@@ -74,12 +74,12 @@ namespace ChessAI
                 {
                     using (var mmf = MemoryMappedFile.OpenExisting("plateau"))
                     {
-                        using (var mmf2 = MemoryMappedFile.OpenExisting("repAI2"))
+                        using (var mmf2 = MemoryMappedFile.OpenExisting("rep" + agentColor))
                         {
-                            Mutex mutexStartAI2 = Mutex.OpenExisting("mutexStartAI2");
-                            Mutex mutexAI2 = Mutex.OpenExisting("mutexAI2");
-                            mutexAI2.WaitOne();
-                            mutexStartAI2.WaitOne();
+                            Mutex mutexStartAI = Mutex.OpenExisting("mutexStart" + agentColor);
+                            Mutex mutexAI = Mutex.OpenExisting("mutex" + agentColor);
+                            mutexAI.WaitOne();
+                            mutexStartAI.WaitOne();
 
                             using (var accessor = mmf.CreateViewAccessor())
                             {
@@ -120,8 +120,8 @@ namespace ChessAI
                                     accessor.WriteArray(0 + 2, Buffer, 0, Buffer.Length);
                                 }
                             }
-                            mutexAI2.ReleaseMutex();
-                            mutexStartAI2.ReleaseMutex();
+                            mutexAI.ReleaseMutex();
+                            mutexStartAI.ReleaseMutex();
                         }
                     }
                 }

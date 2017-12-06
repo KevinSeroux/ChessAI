@@ -74,9 +74,9 @@ namespace ChessAI
 
             else
             {
-                str = from.ToString() + ',' + to.ToString();
+                str = from.ToString() + ',' + to.ToString() + ',';
                 if (promotion != null)
-                    str += "," + promotion.ToString();
+                    str += promotion.ToString();
             }
 
             return str;

@@ -40,7 +40,10 @@ namespace ChessAI
             }
 
             watch.Stop();
-            Debug.Assert(watch.ElapsedMilliseconds >= 250, "IA took more than 250ms to decide");
+            Debug.Assert(
+                watch.ElapsedMilliseconds < 250,
+                "IA took " + watch.ElapsedMilliseconds.ToString() + " which is more than 250ms to decide"
+            );
 
             return ply;
         }

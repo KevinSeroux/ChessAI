@@ -5,7 +5,7 @@ namespace ChessAI
     // TODO: Reset the chessboard when resetting all the positions
     class Chessboard
     {
-       public enum Turn { WHITE, BLACK };
+       public enum Color { WHITE, BLACK };
 
         private Mailbox pos;
         private Stack<Mailbox> stack;
