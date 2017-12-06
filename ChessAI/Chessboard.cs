@@ -54,7 +54,7 @@ namespace ChessAI
             board.bishops = 0x0000000000000000;
             board.queens = 0x0000000000000000;
             board.kings = 0x0000000000000208;
-            board.castling = 0x00000000;
+            board.castling = 0x00000000; // Always at 0
             board.turn = true;
 
             return board;

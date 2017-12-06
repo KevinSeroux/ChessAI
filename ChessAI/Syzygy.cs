@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using static ChessAI.Evaluator;
 
 namespace ChessAI
@@ -66,6 +67,7 @@ namespace ChessAI
             }
         }
 
+        // Castling is not supported
         public Ply getBestPly()
         {
             if (impl is null) return null;
@@ -89,11 +91,43 @@ namespace ChessAI
                 UIntPtr.Zero // No more results
             );
 
-            uint ep = Fathom.GetEP(res);
-            uint promote = Fathom.GetPromotes(res);
+            if (res == Fathom.TB_RESULT_FAILED)
+                return null;
+
             uint from = Fathom.GetFrom(res);
             uint to = Fathom.GetTo(res);
-            Ply ply = Ply.Position(from, to);
+            uint promote = Fathom.GetPromotes(res);
+            uint ep = Fathom.GetEP(res);
+
+            Ply ply;
+
+            switch (promote)
+            {
+                case Fathom.TB_PROMOTES_ROOK:
+                    ply = Ply.PromoteRook(from, to);
+                    break;
+
+                case Fathom.TB_PROMOTES_KNIGHT:
+                    ply = Ply.PromoteKnight(from, to);
+                    break;
+
+                case Fathom.TB_PROMOTES_BISHOP:
+                    ply = Ply.PromoteBishop(from, to);
+                    break;
+
+                case Fathom.TB_PROMOTES_QUEEN:
+                    ply = Ply.PromoteQueen(from, to);
+                    break;
+
+                default:
+                    if (ep == 0)
+                        ply = Ply.Position(from, to);
+                    else
+                        ply = Ply.EnPassant(from, to, ep);
+
+                    break;
+            }
+
 
             // From here, it is just printf debugging
             {
@@ -143,39 +177,10 @@ namespace ChessAI
 
                 uint dtz = Fathom.GetDTZ(res);
 
-                String promoteStr;
-                switch (promote)
-                {
-                    case Fathom.TB_PROMOTES_NONE:
-                        promoteStr = "nope";
-                        break;
-
-                    case Fathom.TB_PROMOTES_ROOK:
-                        promoteStr = "ROOK";
-                        break;
-
-                    case Fathom.TB_PROMOTES_KNIGHT:
-                        promoteStr = "KNIGHT";
-                        break;
-
-                    case Fathom.TB_PROMOTES_BISHOP:
-                        promoteStr = "BISHOP";
-                        break;
-
-                    case Fathom.TB_PROMOTES_QUEEN:
-                        promoteStr = "QUEEN";
-                        break;
-
-                    default:
-                        promoteStr = "N/A";
-                        break;
-                }
-
                 Console.Out.WriteLine(
                     "Status: " + status + "\n" +
                     "WDL: " + wdlStr + ", DTZ: " + dtz + "\n" +
                     "ply: " + ply.ToString() + "\n" +
-                    "promote: " + promoteStr + "\n" +
                     "ep: " + ep + "\n"
                 );
             }
