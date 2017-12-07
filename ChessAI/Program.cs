@@ -17,7 +17,7 @@ namespace ChessAI
         {
             // Dependencies injection
             board = new Chessboard();
-            Syzygy tableReader = new Syzygy(board, "dataa"); //TODO correct
+            Syzygy tableReader = new Syzygy(board, "data");
             Evaluator evaluator = new Evaluator(board);
             strategist = new Strategist(board, evaluator, tableReader);
         }
