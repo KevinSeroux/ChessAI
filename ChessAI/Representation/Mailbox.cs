@@ -26,7 +26,10 @@ namespace ChessAI
         private uint castle;
 
         private int? ep;
-        
+        public bool check
+        {
+            get; private set;
+        }
 
 
         //representation Max
@@ -107,6 +110,7 @@ namespace ChessAI
             };
 
             ep = null;
+            check = false;
         }
 
         public uint CountMen
@@ -152,6 +156,7 @@ namespace ChessAI
             Array.Copy(m.color, color, 64);
 
             this.ep = m.ep;
+            this.check = m.check;
 
         }
 
@@ -232,6 +237,117 @@ namespace ChessAI
                 }
                 piece[i] = curPiece;
             }
+
+            this.check = testCheck();
+        }
+
+        public bool testCheck(Color playerSide)
+        {
+            int? kingIndex64 = null;
+
+            //On cherche le roi
+            for(int i = 0; i < piece.Length; i++)
+            {
+                if(piece[i] == (int)Piece.KING && color[i] == (int)playerSide)
+                {
+                    kingIndex64 = i;
+                    break;
+                }
+                    
+            }
+
+            Debug.Assert(kingIndex64.HasValue, "On a pas trouvé le roi !");
+
+            int xside = (playerSide == Color.WHITE ? (int)Color.BLACK : (int)Color.WHITE);
+
+            //On test tous les mouvements des pieces regulière qui peuvent atteindre le roi
+            for (int j = 0; j < Mailbox.offsets[(int)Piece.QUEEN]; ++j)
+            { /* for all knight or ray directions */
+                for (int n = kingIndex64.Value; ;)
+                { /* starting with from square */
+                    n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[(int)Piece.QUEEN, j]]; /* next square along the ray j */
+                    if (n == -1) break; /* outside board */
+
+                    //Si on arrive sur une piece
+                    if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT)
+                    {
+                        if (color[n] == xside)
+                            return true;
+                        break;
+                    }
+                    
+                    if (!Mailbox.slide[(int)Piece.QUEEN]) break; /* next direction */
+                }
+            }
+
+            //Il faut maintenant tester les cavaliers
+            for (int j = 0; j < Mailbox.offsets[(int)Piece.BISHOP]; ++j)
+            { /* for all knight or ray directions */
+                for (int n = kingIndex64.Value; ;)
+                { /* starting with from square */
+                    n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[(int)Piece.BISHOP, j]]; /* next square along the ray j */
+                    if (n == -1) break; /* outside board */
+
+                    //Si on arrive sur une piece
+                    if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT)
+                    {
+                        if (color[n] == xside)
+                            return true;
+                        break;
+                    }
+
+                    if (!Mailbox.slide[(int)Piece.BISHOP]) break; /* next direction */
+                }
+            }
+
+            //Et maintenant les pions
+            if(playerSide == Color.WHITE)
+            {
+                //Manger Gauche
+                int n = Mailbox.tab120[Mailbox.tabPos[kingIndex64.Value] + Mailbox.offset[0, 1]];
+                if (n != -1)
+                {
+                    if (color[n] == (int)Color.BLACK)
+                    {
+                        return true;
+                    }
+                }
+
+                //Manger droite
+                n = Mailbox.tab120[Mailbox.tabPos[kingIndex64.Value] + Mailbox.offset[0, 2]];
+                if (n != -1)
+                {
+                    if (color[n] == (int)Color.BLACK)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                //Manger Gauche
+                int n = Mailbox.tab120[Mailbox.tabPos[kingIndex64.Value] - Mailbox.offset[0, 1]];
+                if (n != -1)
+                {
+                    if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                    {
+                        return true;
+                    }
+                }
+
+                //Manger droite
+                n = Mailbox.tab120[Mailbox.tabPos[kingIndex64.Value] - Mailbox.offset[0, 2]];
+                if (n != -1)
+                {
+                    if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+
+            return false;
         }
 
         /*
@@ -328,6 +444,7 @@ namespace ChessAI
                 //TODO -- qqch à faire la ? Vu qu'on a depart et arrivé ?
             }
 
+            this.check = testCheck();
 
         }
     }

@@ -18,6 +18,21 @@ namespace ChessAI
         //TODO
         public ICollection<Ply> GetPossiblePlies()
         {
+            if (board.GetMailbox().check)
+            {
+                return withCheckPly();
+            }
+            return withoutCheckPly();
+            //return new HashSet<Ply>();
+        }
+
+        private ICollection<Ply> withCheckPly()
+        {
+
+        }
+
+        private ICollection<Ply> withoutCheckPly()
+        {
             List<Ply> mouvementPossible = new List<Ply>();
             int[] color = board.GetMailbox().getColor();
             int[] piece = board.GetMailbox().getPiece();
@@ -40,14 +55,14 @@ namespace ChessAI
                                 n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[p, j]]; /* next square along the ray j */
                                 if (n == -1) break; /* outside board */
 
-                                if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT )
+                                if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT)
                                 //if (color[n] != (int)Color.NONE)
                                 {
                                     if (color[n] == xside)
-                                        mouvementPossible.Add(genMove(i, n, 1,-1)); /* capture from i to n */
+                                        mouvementPossible.Add(genMove(i, n, 1, -1)); /* capture from i to n */
                                     break;
                                 }
-                                mouvementPossible.Add(genMove(i, n, 0,-1)); /* quiet move from i to n */
+                                mouvementPossible.Add(genMove(i, n, 0, -1)); /* quiet move from i to n */
                                 if (!Mailbox.slide[p]) break; /* next direction */
                             }
                         }
@@ -58,8 +73,9 @@ namespace ChessAI
                         // -------------------------------- Les "en passant" ne sont pas pris en charge encore ------------------------------
                         /* pawn moves */
 
-                        if (side == (int)Color.WHITE) { 
-                        
+                        if (side == (int)Color.WHITE)
+                        {
+
                             int n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 3]];
                             if (n != -1)
                             {
@@ -67,7 +83,7 @@ namespace ChessAI
                                 if (Mailbox.tabPos[i] <= 88 && Mailbox.tabPos[i] >= 81)
                                 {
 
-                                    if ((color[n] == (int)Color.NONE) && (Mailbox.tabPos[n + Mailbox.offset[0,0]] == (int)Color.NONE))
+                                    if ((color[n] == (int)Color.NONE) && (Mailbox.tabPos[n + Mailbox.offset[0, 0]] == (int)Color.NONE))
                                     {
                                         int caseEnPassant = Mailbox.tabPos[n + Mailbox.offset[0, 0]];
                                         mouvementPossible.Add(genMove(i, n, 0, caseEnPassant));
@@ -80,7 +96,7 @@ namespace ChessAI
                             {
                                 if (Mailbox.tabPos[n] == (int)Color.NONE)
                                 {
-                                    mouvementPossible.Add(genMove(i, n, 0,-1));
+                                    mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
                             }
 
@@ -90,7 +106,7 @@ namespace ChessAI
                             {
                                 if (color[n] == (int)Color.BLACK)
                                 {
-                                    mouvementPossible.Add(genMove(i, n, 1,-1));
+                                    mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
                             }
 
@@ -100,7 +116,7 @@ namespace ChessAI
                             {
                                 if (color[n] == (int)Color.BLACK)
                                 {
-                                    mouvementPossible.Add(genMove(i, n, 1,-1));
+                                    mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
                             }
 
@@ -117,7 +133,7 @@ namespace ChessAI
                                     if (color[n] == (int)Color.NONE && (Mailbox.tabPos[n - Mailbox.offset[0, 0]] == (int)Color.NONE))
                                     {
                                         int caseEnPassant = Mailbox.tabPos[n - Mailbox.offset[0, 0]];
-                                        mouvementPossible.Add(genMove(i, n, 0,caseEnPassant));
+                                        mouvementPossible.Add(genMove(i, n, 0, caseEnPassant));
                                     }
                                 }
                             }
@@ -128,7 +144,7 @@ namespace ChessAI
                             {
                                 if (color[n] == (int)Color.NONE)
                                 {
-                                    mouvementPossible.Add(genMove(i, n, 0,-1));
+                                    mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
                             }
 
@@ -138,7 +154,7 @@ namespace ChessAI
                             {
                                 if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
-                                    mouvementPossible.Add(genMove(i, n, 1,-1));
+                                    mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
                             }
 
@@ -148,7 +164,7 @@ namespace ChessAI
                             {
                                 if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
-                                    mouvementPossible.Add(genMove(i, n, 1,-1));
+                                    mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
                             }
                         }
@@ -156,8 +172,8 @@ namespace ChessAI
                 }
             }
 
+
             return mouvementPossible;
-            //return new HashSet<Ply>();
         }
 
         private Ply genMove(int depart, int arrivee, int v, int enPassant)
