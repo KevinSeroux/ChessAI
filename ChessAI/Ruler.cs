@@ -40,13 +40,14 @@ namespace ChessAI
                                 n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[p, j]]; /* next square along the ray j */
                                 if (n == -1) break; /* outside board */
 
+                                //if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT )
                                 if (color[n] != (int)Color.NONE)
                                 {
                                     if (color[n] == xside)
-                                        mouvementPossible.Add(genMove(i, n, 1)); /* capture from i to n */
+                                        mouvementPossible.Add(genMove(i, n, 1,-1)); /* capture from i to n */
                                     break;
                                 }
-                                mouvementPossible.Add(genMove(i, n, 0)); /* quiet move from i to n */
+                                mouvementPossible.Add(genMove(i, n, 0,-1)); /* quiet move from i to n */
                                 if (!Mailbox.slide[p]) break; /* next direction */
                             }
                         }
@@ -57,69 +58,97 @@ namespace ChessAI
                         // -------------------------------- Les "en passant" ne sont pas pris en charge encore ------------------------------
                         /* pawn moves */
 
-                        if (side == (int)Color.WHITE)
-                        {
-                            //Double "saut"
-                            if (Mailbox.tabPos[i] <= 88 && Mailbox.tabPos[i] >= 81)
+                        if (side == (int)Color.WHITE) { 
+                        
+                            int n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 3]];
+                            if (n != -1)
                             {
-                                if (color[i + Mailbox.MMPAWN[3]] == (int)Color.NONE)
+                                //Double "saut"
+                                if (Mailbox.tabPos[i] <= 88 && Mailbox.tabPos[i] >= 81)
                                 {
-                                    mouvementPossible.Add(genMove(i, i + Mailbox.MMPAWN[3], 0));
+
+                                    if ((color[n] == (int)Color.NONE) && (Mailbox.tabPos[n + Mailbox.offset[0,0]] == (int)Color.NONE))
+                                    {
+                                        int caseEnPassant = Mailbox.tabPos[n + Mailbox.offset[0, 0]];
+                                        mouvementPossible.Add(genMove(i, n, 0, caseEnPassant));
+                                    }
+                                }
+                            }
+                            //Avancer
+                            n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 0]];
+                            if (n != -1)
+                            {
+                                if (Mailbox.tabPos[n] == (int)Color.NONE)
+                                {
+                                    mouvementPossible.Add(genMove(i, n, 0,-1));
                                 }
                             }
 
-                            //Avancer
-                            if (color[i + Mailbox.MMPAWN[0]] == (int)Color.NONE)
-                            {
-                                mouvementPossible.Add(genMove(i, i + Mailbox.MMPAWN[0], 0));
-                            }
-
                             //Manger Gauche
-
-                            if (color[i + Mailbox.MMPAWN[1]] == (int)Color.BLACK)
+                            n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 1]];
+                            if (n != -1)
                             {
-                                mouvementPossible.Add(genMove(i, i + Mailbox.MMPAWN[1], 1));
+                                if (color[n] == (int)Color.BLACK)
+                                {
+                                    mouvementPossible.Add(genMove(i, n, 1,-1));
+                                }
                             }
 
                             //Manger droite
-
-                            if (color[i + Mailbox.MMPAWN[2]] == (int)Color.BLACK)
+                            n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 2]];
+                            if (n != -1)
                             {
-                                mouvementPossible.Add(genMove(i, i + Mailbox.MMPAWN[2], 1));
+                                if (color[n] == (int)Color.BLACK)
+                                {
+                                    mouvementPossible.Add(genMove(i, n, 1,-1));
+                                }
                             }
 
                         }
                         else //side == dark
                         {
                             //Double "saut"
-                            if (Mailbox.tabPos[i] >= 31 && Mailbox.tabPos[i] <= 38)
+                            int n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 3]];
+                            if (n != -1)
                             {
-
-                                if (color[i - Mailbox.MMPAWN[3]] == (int)Color.NONE)
+                                if (Mailbox.tabPos[i] >= 31 && Mailbox.tabPos[i] <= 38)
                                 {
-                                    mouvementPossible.Add(genMove(i, i - Mailbox.MMPAWN[3], 0));
+
+                                    if (color[n] == (int)Color.NONE && (Mailbox.tabPos[n - Mailbox.offset[0, 0]] == (int)Color.NONE))
+                                    {
+                                        mouvementPossible.Add(genMove(i, n, 0,-1));
+                                    }
                                 }
                             }
 
                             //Avancer
-
-                            if (color[i - Mailbox.MMPAWN[0]] == (int)Color.NONE)
+                            n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 0]];
+                            if (n != -1)
                             {
-                                mouvementPossible.Add(genMove(i, i - Mailbox.MMPAWN[0], 0));
+                                if (color[i - Mailbox.MMPAWN[0]] == (int)Color.NONE)
+                                {
+                                    mouvementPossible.Add(genMove(i, i - Mailbox.MMPAWN[0], 0,-1));
+                                }
                             }
 
                             //Manger Gauche
-
-                            if (color[i - Mailbox.MMPAWN[1]] == (int)Color.WHITE)
+                            n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 1]];
+                            if (n != -1)
                             {
-                                mouvementPossible.Add(genMove(i, i - Mailbox.MMPAWN[1], 1));
+                                if (color[n] == (int)Color.WHITE)
+                                {
+                                    mouvementPossible.Add(genMove(i, n, 1,-1));
+                                }
                             }
 
                             //Manger droite
-
-                            if (color[i - Mailbox.MMPAWN[2]] == (int)Color.WHITE)
+                            n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 2]];
+                            if (n != -1)
                             {
-                                mouvementPossible.Add(genMove(i, i - Mailbox.MMPAWN[2], 1));
+                                if (color[i - Mailbox.MMPAWN[2]] == (int)Color.WHITE)
+                                {
+                                    mouvementPossible.Add(genMove(i, n, 1,-1));
+                                }
                             }
                         }
                     }
@@ -130,13 +159,28 @@ namespace ChessAI
             //return new HashSet<Ply>();
         }
 
-        private Ply genMove(int i, int n, int v)
+        private Ply genMove(int depart, int arrivee, int v, int enPassant)
         {
-            string dp = Mailbox.tabCoord[i];
-            string arr = Mailbox.tabCoord[n];
+            string dp = Mailbox.tabCoord[depart];
+            string arr = Mailbox.tabCoord[arrivee];
 
-            return Ply.Position(new Case(dp), new Case(arr));
 
+            /*Ply p;
+
+            if(enPassant != -1)
+            {
+                string ep = Mailbox.tabCoord[enPassant];
+                p = Ply.EnPassant(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr), Case.BuildCaseMailBox(enPassant, ep));
+            }
+            else
+            {
+                p = Ply.Position(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
+            }
+
+            return p;
+            */
+
+            return Ply.Position(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
             //int valeur = evaluateBoard(LIGHT);
 
             //Console.WriteLine("Mouvement possible {2} : {0}, {1}", dp, arr, piece[i]);

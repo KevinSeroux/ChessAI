@@ -103,7 +103,7 @@ namespace ChessAI
                                 /***************************************** ECRIRE LE CODE DE L'IA *************************************/
                                 /******************************************************************************************************/
                                 
-                                board.ResetFromPlatformRepresentation(tabVal);
+                                board.ResetFromPlatformRepresentation(tabVal, agentColor);
                                 Ply ply = strategist.Run();
                                 value = ply.ToString();
 

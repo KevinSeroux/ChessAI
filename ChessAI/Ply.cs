@@ -63,7 +63,6 @@ namespace ChessAI
         public Case captureEnPassant { get; private set; }
 
 
-
         private Ply()
         {
             castlingKingSide = false;

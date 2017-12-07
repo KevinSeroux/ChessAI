@@ -12,8 +12,8 @@ namespace ChessAI
         BISHOP = 2,
         ROOK = 3,
         QUEEN = 4,
-        KING = 5,
-        PAWN_EN_PASSANT = 6 //TODO
+        KING = 5
+        //PAWN_EN_PASSANT = 6 //TODO
     }
 
     enum Color
@@ -151,10 +151,11 @@ namespace ChessAI
             get { return turn; }
         }
         
-        public void ResetFromPlatformRepresentation(int[] tabVal)
+        public void ResetFromPlatformRepresentation(int[] tabVal, Color agentColor)
         {
             pos = new Mailbox(tabVal);
             stack.Clear();
+            turn = agentColor;
         }
 
         private void switchTurn()

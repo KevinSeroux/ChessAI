@@ -10,7 +10,7 @@ namespace ChessAI
     class Mailbox
     {
 
-        public readonly static int[] offsets = { 0, 8, 4, 4, 8, 8 }; // NB Direction pour chaque pièce
+        public readonly static int[] offsets = { 4, 8, 4, 4, 8, 8 }; // NB Direction pour chaque pièce
 
         public readonly static bool[] slide = { false, false, true, true, true, false };
 
@@ -24,7 +24,10 @@ namespace ChessAI
         
 
         private uint castle;
-        private uint ep;
+
+        private int ep;
+        
+
 
         //representation Max
         public readonly static int[] MMPAWN = { -8, -9, -7, -16 }; //Pion
@@ -35,7 +38,7 @@ namespace ChessAI
         int[] MMKING = { -1, 1, -8, 8 }; //Roi*/
 
         public readonly static int[,] offset = {
-                { 0, 0, 0, 0, 0, 0, 0, 0 },
+                { -10, -11, -9, -20, 0, 0, 0, 0 },
                 { -21, -19, -12, -8, 8, 12, 19, 21 },
                 { -11, -9, 9, 11, 0, 0, 0, 0 },
                 { -10, -1, 1, 10, 0, 0, 0, 0 },
@@ -172,11 +175,12 @@ namespace ChessAI
                 switch (Math.Abs(val))
                 {
                     case 1:
-                        curPiece = 0;
+                        curPiece = (int)Piece.PAWN;
                         break;
 
                     case 10: // TODO En passant
-                        curPiece = (int)Color.NONE; //TODO Rename to Piece
+                        //curPiece = (int)Color.PAWN_EN_PASSANT; //TODO Rename to Piece
+                        curPiece = (int)Color.NONE;
                         break;
 
                     case 21:
@@ -220,16 +224,26 @@ namespace ChessAI
         */
         public void ply(Ply p)
         {
+            int? testdep = p.from.getPosMailBox();
+            int? testarr = p.to.getPosMailBox();
+
             int dep = 0;
             int arr = 0;
-            
 
-            //TODO BETTER
-            for(int i = 0; i < tabCoord.Length; i++)
+            if(testdep.HasValue && testarr.HasValue)
             {
-                if (p.from.ToString().Equals(tabCoord[i])) dep = i;
-                if (p.to.ToString().Equals(tabCoord[i])) arr = i;
+                dep = p.from.getPosMailBox();
+                arr = p.to.getPosMailBox();
             }
+            else
+            {
+                for (int i = 0; i < tabCoord.Length; i++)
+                {
+                    if (p.from.ToString().Equals(tabCoord[i])) dep = i;
+                    if (p.to.ToString().Equals(tabCoord[i])) arr = i;
+                }
+            }
+            
 
             color[arr] = color[dep];
             color[dep] = (int)Color.NONE;
@@ -237,6 +251,7 @@ namespace ChessAI
             piece[arr] = piece[dep];
             piece[dep] = (int)Color.NONE;
 
+            //TODO
             if(p.captureEnPassant != null)
             {
                 int caseEnPassant = 0;
