@@ -16,22 +16,29 @@ namespace ChessAI
         }
 
         //TODO
+        //Première version, il faudrait regarder la methode "attaque" -> lien https://stackoverflow.com/questions/16803893/chess-getting-all-legal-chess-moves
+        //Refaire avec un unply plutot qu'avec une copie de la MailBox
         public ICollection<Ply> GetPossiblePlies()
         {
-            if (board.GetMailbox().check)
+            List<Ply> legalMove = new List<Ply>();
+            Mailbox temp = new Mailbox(board.GetMailbox());
+
+            foreach(Ply pseudo in generatePeudoLegalsMoves())
             {
-                return withCheckPly();
+                temp.testPly(pseudo);
+                if (!temp.testCheck(board.GetTurn))
+                {
+                    legalMove.Add(pseudo);
+                }
+                temp.testUnPly();
             }
-            return withoutCheckPly();
+            
+
+            return legalMove;
             //return new HashSet<Ply>();
         }
 
-        private ICollection<Ply> withCheckPly()
-        {
-
-        }
-
-        private ICollection<Ply> withoutCheckPly()
+        private ICollection<Ply> generatePeudoLegalsMoves()
         {
             List<Ply> mouvementPossible = new List<Ply>();
             int[] color = board.GetMailbox().getColor();

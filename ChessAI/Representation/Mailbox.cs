@@ -26,10 +26,6 @@ namespace ChessAI
         private uint castle;
 
         private int? ep;
-        public bool check
-        {
-            get; private set;
-        }
 
 
         //representation Max
@@ -110,7 +106,6 @@ namespace ChessAI
             };
 
             ep = null;
-            check = false;
         }
 
         public uint CountMen
@@ -156,7 +151,6 @@ namespace ChessAI
             Array.Copy(m.color, color, 64);
 
             this.ep = m.ep;
-            this.check = m.check;
 
         }
 
@@ -237,8 +231,6 @@ namespace ChessAI
                 }
                 piece[i] = curPiece;
             }
-
-            this.check = testCheck();
         }
 
         public bool testCheck(Color playerSide)
@@ -358,6 +350,8 @@ namespace ChessAI
         private Promotion promotion;
         private Case captureEnPassant;
         */
+
+
         public void ply(Ply p)
         {
             int? testdep = p.from.getPosMailBox();
@@ -379,9 +373,9 @@ namespace ChessAI
                     if (p.to.ToString().Equals(tabCoord[i])) arr = i;
                 }
             }
-            
 
-            color[arr] = color[dep];
+
+        color[arr] = color[dep];
             color[dep] = (int)Color.NONE;
 
             piece[arr] = piece[dep];
@@ -444,8 +438,22 @@ namespace ChessAI
                 //TODO -- qqch à faire la ? Vu qu'on a depart et arrivé ?
             }
 
-            this.check = testCheck();
+        }
 
+
+        int[] savePiece = new int[64];
+        int[] saveColor = new int[64];
+        public void testPly(Ply p)
+        {
+            Array.Copy(piece, savePiece, 64);
+            Array.Copy(color, saveColor, 64);
+            this.ply(p);
+        }
+
+        public void testUnPly()
+        {
+            Array.Copy(savePiece, piece, 64);
+            Array.Copy(saveColor, color, 64);
         }
     }
 }
