@@ -123,7 +123,7 @@ namespace ChessAI
                     if (ep == 0)
                         ply = Ply.Position(from, to);
                     else
-                        ply = Ply.EnPassant(from, to, ep);
+                        ply = Ply.EnPassant(from, to, ep,false); //TODO <----- Qu'est ce qu'il se passe la ? Si capture effective mettre true, si generation d'une case EP mettre false
 
                     break;
             }

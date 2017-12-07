@@ -28,16 +28,16 @@ namespace ChessAI
         //TODO Ameliorer en prenant en comptre le nombre de coups possibles ?
         public int Evaluate()
         { 
-            int valeurPiece = 0;
+            double valeurPiece = 0;
 
 
-            int valeurCouvertureW = 0;
-            int valeurProtectionW = 0;
-            int valeurAttaqueW = 0;
+            double valeurCouvertureW = 0;
+            double valeurProtectionW = 0;
+            double valeurAttaqueW = 0;
 
-            int valeurCouvertureB = 0;
-            int valeurProtectionB = 0;
-            int valeurAttaqueB = 0;
+            double valeurCouvertureB = 0;
+            double valeurProtectionB = 0;
+            double valeurAttaqueB = 0;
 
 
             int[] color = board.GetMailbox().getColor();
@@ -50,23 +50,23 @@ namespace ChessAI
             { /* loop over all squares (no piece list) */
 
                 int p = piece[i];
-                if (p != (int)Color.NONE)
+                if (p != (int)Color.NONE && p!=(int)Color.PAWN_EN_PASSANT)
                 {
                     if (p != (int)Piece.PAWN)
                     {
                         switch ((Piece)piece[i])
                         {
                             case Piece.KNIGHT:
-                                valeurPiece += 3 * color[i];
+                                valeurPiece += 7 * color[i];
                                 break;
                             case Piece.BISHOP:
-                                valeurPiece += 3 * color[i];
+                                valeurPiece += 35 * color[i];
                                 break;
                             case Piece.ROOK:
-                                valeurPiece += 3 * color[i];
+                                valeurPiece += 35 * color[i];
                                 break;
                             case Piece.QUEEN:
-                                valeurPiece += 10 * color[i];
+                                valeurPiece += 100 * color[i];
                                 break;
                             case Piece.KING:
                                 valeurPiece += 200 * color[i];
@@ -81,7 +81,7 @@ namespace ChessAI
                                 n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[p, j]]; /* next square along the ray j */
                                 if (n == -1) break; /* outside board */
 
-                                if (color[n] != (int)Color.NONE)
+                                if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT)
                                 {
                                     if (color[n] == xside && xside == (int)Color.BLACK)
                                         valeurAttaqueW++; /* capture from i to n */ //----------------------------------------------------- < attaque possible
@@ -220,11 +220,14 @@ namespace ChessAI
                 }
             }
 
-            int mobilite = valeurCouvertureB - valeurCouvertureW; //TODO ajouter un poids ici
-            int protection = valeurProtectionB - valeurProtectionW; //TODO same
-            int attaque = valeurAttaqueB - valeurAttaqueW; //TODO same
+            double mobilite = valeurCouvertureB - valeurCouvertureW; //TODO ajouter un poids ici
+            double protection = valeurProtectionB - valeurProtectionW; //TODO same
+            double attaque = valeurAttaqueB - valeurAttaqueW; //TODO same
 
-            return (valeurPiece + mobilite + protection + attaque) * side;
+            int eval = (int)((valeurPiece + 0.5 * mobilite + 0.6 * protection + 0.6 * attaque) * side);
+
+            Console.WriteLine("Evaluation {0} : {1}", side, eval);
+            return eval;
             //return valeurAttaqueW + valeurCouvertureW + valeurPiece + valeurProtectionW;
             //return (new Random()).Next();
         }

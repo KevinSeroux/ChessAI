@@ -25,7 +25,7 @@ namespace ChessAI
 
         private uint castle;
 
-        private int ep;
+        private int? ep;
         
 
 
@@ -105,6 +105,8 @@ namespace ChessAI
                         -1, -1, -1, -1, -1, -1, -1, -1,
                         -1, -1, -1, -1, -1, -1, -1, -1
             };
+
+            ep = null;
         }
 
         public uint CountMen
@@ -149,6 +151,8 @@ namespace ChessAI
             Array.Copy(m.piece, piece,64);
             Array.Copy(m.color, color, 64);
 
+            this.ep = m.ep;
+
         }
 
         public Mailbox(int[] tabVal)
@@ -156,13 +160,13 @@ namespace ChessAI
             this.piece = new int[64];
             this.color = new int[64];
 
-            for (uint i = 0; i < tabVal.Length; i++)
+            for (int i = 0; i < tabVal.Length; i++)
             {
                 int val = tabVal[i];
 
                 int col;
                 if (val == 10 || val == -10)
-                    col = (int)Color.NONE;
+                    col = (int)Color.PAWN_EN_PASSANT;
                 else if (val < 0)
                     col = (int)Color.BLACK;
                 else if (val == 0)
@@ -181,6 +185,22 @@ namespace ChessAI
                     case 10: // TODO En passant
                         //curPiece = (int)Color.PAWN_EN_PASSANT; //TODO Rename to Piece
                         curPiece = (int)Color.NONE;
+
+                        Debug.Assert(ep.HasValue, "Mailbox conversion : Il y a plusieurs pion en passant sur le board! IMPOSSIBLE NON ?");
+                        //Il faut trouver le pion associé
+                        if(tabPos[i] >= 41 && tabPos[i] <= 48)
+                        {
+                            //Noir
+                            this.ep = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 0]];
+                            break;
+                        }
+                        if(tabPos[i] >=71 && tabPos[i] <= 78)
+                        {
+                            //blanc
+                            this.ep = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 0]];
+                            break;
+                        }
+
                         break;
 
                     case 21:
@@ -252,20 +272,47 @@ namespace ChessAI
             piece[dep] = (int)Color.NONE;
 
             //TODO
-            if(p.captureEnPassant != null)
+            //C'est un double saut qui genere une case en passant
+            if(p.captureEnPassant != null && !p.captureEP)
             {
-                int caseEnPassant = 0;
-                for (int i = 0; i < tabCoord.Length; i++)
-                {
-                    if (p.captureEnPassant.ToString().Equals(tabCoord[i]))
-                    {
-                        caseEnPassant = i;
-                        break;
-                    }
-                }
-                color[caseEnPassant] = (int)Color.NONE;
-                piece[caseEnPassant] = (int)Color.NONE;
+                //Si EP est deja set, c'est celui du tour d'avant donc on peut l'ecraser
+                int caseEnPassant = p.captureEnPassant.getPosMailBox();
+                color[caseEnPassant] = (int)Color.PAWN_EN_PASSANT;
+                ep = arr;
+            } else if(p.captureEnPassant != null && p.captureEP)
+            {
+                Debug.Assert(ep.HasValue, "On mange un pion via EP mais aucuns pions associe à la piece");
+                //On mange un pion via la case en passant
+                color[ep.Value] = (int)Color.NONE;
+                piece[ep.Value] = (int)Color.NONE;
+                ep = null;
+
             }
+
+            if(p.captureEnPassant == null && this.ep.HasValue)
+            {
+                //Si on fait un mouvement et qu'il y a un EP alors on reset le EP (il est valable qu'un tour)
+                int? caseEnPassant = null;
+                //Il faut trouver le pion associé
+                if (tabPos[ep.Value] >= 41 && tabPos[ep.Value] <= 48)
+                {
+                    //Noir
+                    caseEnPassant = Mailbox.tab120[Mailbox.tabPos[ep.Value] + Mailbox.offset[0, 0]];
+                }
+                else if (tabPos[ep.Value] >= 71 && tabPos[ep.Value] <= 78)
+                {
+                    //blanc
+                    caseEnPassant = Mailbox.tab120[Mailbox.tabPos[ep.Value] - Mailbox.offset[0, 0]];
+                }
+
+                Debug.Assert(caseEnPassant.HasValue, "Il y a une case en passant qui n'est pas au bon endroit " + tabCoord[ep.Value]);
+
+                color[caseEnPassant.Value] = (int)Color.NONE;
+
+                ep = null;
+
+            }
+
 
             if(p.promotion != null)
             {

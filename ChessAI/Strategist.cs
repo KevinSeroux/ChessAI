@@ -171,6 +171,5 @@ namespace ChessAI
 
             return best;
         }
-
     }
 }

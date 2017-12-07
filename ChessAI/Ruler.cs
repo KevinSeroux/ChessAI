@@ -40,8 +40,8 @@ namespace ChessAI
                                 n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[p, j]]; /* next square along the ray j */
                                 if (n == -1) break; /* outside board */
 
-                                //if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT )
-                                if (color[n] != (int)Color.NONE)
+                                if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT )
+                                //if (color[n] != (int)Color.NONE)
                                 {
                                     if (color[n] == xside)
                                         mouvementPossible.Add(genMove(i, n, 1,-1)); /* capture from i to n */
@@ -116,7 +116,8 @@ namespace ChessAI
 
                                     if (color[n] == (int)Color.NONE && (Mailbox.tabPos[n - Mailbox.offset[0, 0]] == (int)Color.NONE))
                                     {
-                                        mouvementPossible.Add(genMove(i, n, 0,-1));
+                                        int caseEnPassant = Mailbox.tabPos[n - Mailbox.offset[0, 0]];
+                                        mouvementPossible.Add(genMove(i, n, 0,caseEnPassant));
                                     }
                                 }
                             }
@@ -125,9 +126,9 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 0]];
                             if (n != -1)
                             {
-                                if (color[i - Mailbox.MMPAWN[0]] == (int)Color.NONE)
+                                if (color[n] == (int)Color.NONE)
                                 {
-                                    mouvementPossible.Add(genMove(i, i - Mailbox.MMPAWN[0], 0,-1));
+                                    mouvementPossible.Add(genMove(i, n, 0,-1));
                                 }
                             }
 
@@ -135,7 +136,7 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 1]];
                             if (n != -1)
                             {
-                                if (color[n] == (int)Color.WHITE)
+                                if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1,-1));
                                 }
@@ -145,7 +146,7 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 2]];
                             if (n != -1)
                             {
-                                if (color[i - Mailbox.MMPAWN[2]] == (int)Color.WHITE)
+                                if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1,-1));
                                 }
@@ -165,22 +166,30 @@ namespace ChessAI
             string arr = Mailbox.tabCoord[arrivee];
 
 
-            /*Ply p;
+            Ply p = null;
 
-            if(enPassant != -1)
+            //Generation d'une case EN_PASSANT car double saut
+            if(v == 0 && enPassant != -1)
             {
                 string ep = Mailbox.tabCoord[enPassant];
-                p = Ply.EnPassant(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr), Case.BuildCaseMailBox(enPassant, ep));
+                p = Ply.EnPassant(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr), Case.BuildCaseMailBox(enPassant, ep), false);
             }
+            //On mange un pion via la case en Passant
+            else if(v == 1 && board.GetMailbox().getColor()[arrivee] == (int)Color.PAWN_EN_PASSANT)
+            {
+                string ep = Mailbox.tabCoord[enPassant];
+                p = Ply.EnPassant(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr), Case.BuildCaseMailBox(enPassant, ep), true);
+            }
+            //Generation d'un mouvement normal
             else
             {
                 p = Ply.Position(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
-            }
+            } 
 
             return p;
-            */
+           
 
-            return Ply.Position(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
+            //return Ply.Position(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
             //int valeur = evaluateBoard(LIGHT);
 
             //Console.WriteLine("Mouvement possible {2} : {0}, {1}", dp, arr, piece[i]);

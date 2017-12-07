@@ -61,7 +61,9 @@ namespace ChessAI
         public Case to { get; private set; }
         public Promotion promotion { get; private set; }
         public Case captureEnPassant { get; private set; }
+        //public Case captureEnPassantCapture { get; private set; }
 
+        public bool captureEP { get; private set; }
 
         private Ply()
         {
@@ -167,15 +169,16 @@ namespace ChessAI
             return newPly;
         }
 
-        static public Ply EnPassant(uint from, uint to, uint capture)
+        static public Ply EnPassant(uint from, uint to, uint capturePossible, bool captureEffective)
         {
-            return EnPassant(new Case(from), new Case(to), new Case(capture));
+            return EnPassant(new Case(from), new Case(to), new Case(capturePossible), captureEffective);
         }
 
-        static public Ply EnPassant(Case from, Case to, Case capture)
+        static public Ply EnPassant(Case from, Case to, Case capturePossible, bool captureEffective)
         {
             Ply newPly = Position(from, to);
-            newPly.captureEnPassant = capture;
+            newPly.captureEnPassant = capturePossible;
+            newPly.captureEP = captureEffective;
             return newPly;
         }
     }
