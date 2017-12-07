@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ChessAI
 {
@@ -10,8 +12,9 @@ namespace ChessAI
         BISHOP = 2,
         ROOK = 3,
         QUEEN = 4,
-        KING = 5
-}
+        KING = 5,
+        PAWN_EN_PASSANT = 6 //TODO
+    }
 
     enum Color
     {
@@ -24,15 +27,20 @@ namespace ChessAI
     {
         private Mailbox pos;
         private Stack<Mailbox> stack;
+        private Color turn;
 
         public Chessboard()
         {
             stack = new Stack<Mailbox>();
+            turn = Color.WHITE;
         }
 
         public uint CountMen
         {
-            get { return 5; }
+            get
+            {
+                return pos.CountMen;
+            }
         }
 
         public void Push(Ply ply)
@@ -43,24 +51,15 @@ namespace ChessAI
             //Copy of pos
             Mailbox mailbox = new Mailbox(pos);
             mailbox.ply(ply);
+            switchTurn();
             pos = mailbox;
-
-            //TODO; Here apply the ply
-            //...
-
         }
 
         // Cancel the previous ply
         public void Pop()
         {
             pos = stack.Pop();
-        }
-
-        // Restore the chessboard to the initial state
-        public void PopAll()
-        {
-            while (stack.Count >= 2) stack.Pop();
-            Pop();
+            switchTurn();
         }
 
         // TODO
@@ -88,17 +87,20 @@ namespace ChessAI
             return pos;
         }
 
-        //TODO
-        public void ResetFromPlatformRepresentation(int[] tabVal, Color agentColor)
+        public Color GetTurn
         {
-            if (agentColor == Color.WHITE)
-            {
-                //tabVal[i] > 0: own pieces
-            }
-            else
-            {
-                //tabVal[i] < 0: own pieces
-            }
+            get { return turn; }
+        }
+        
+        public void ResetFromPlatformRepresentation(int[] tabVal)
+        {
+            pos = new Mailbox(tabVal);
+            stack.Clear();
+        }
+
+        private void switchTurn()
+        {
+            turn = (turn == Color.WHITE ? Color.BLACK : Color.WHITE);
         }
     }
 }

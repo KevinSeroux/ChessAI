@@ -21,8 +21,8 @@ namespace ChessAI
             List<Ply> mouvementPossible = new List<Ply>();
             int[] color = board.GetMailbox().getColor();
             int[] piece = board.GetMailbox().getPiece();
-            int side = (int)board.GetMailbox().getSideToPlay();
-            int xside = (int)board.GetMailbox().getSideToPlay();
+            int side = (int)board.GetTurn;
+            int xside = (int)(board.GetTurn == Color.WHITE ? Color.BLACK : Color.WHITE);
 
 
             for (int i = 0; i < 64; ++i)

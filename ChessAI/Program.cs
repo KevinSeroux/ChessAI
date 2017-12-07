@@ -17,7 +17,7 @@ namespace ChessAI
         {
             // Dependencies injection
             board = new Chessboard();
-            Syzygy tableReader = new Syzygy(board, "data");
+            Syzygy tableReader = new Syzygy(board, "dataa"); //TODO correct
             Evaluator evaluator = new Evaluator(board);
             strategist = new Strategist(board, evaluator, tableReader);
         }
@@ -102,8 +102,8 @@ namespace ChessAI
                                 /******************************************************************************************************/
                                 /***************************************** ECRIRE LE CODE DE L'IA *************************************/
                                 /******************************************************************************************************/
-
-                                board.ResetFromPlatformRepresentation(tabVal, agentColor);
+                                
+                                board.ResetFromPlatformRepresentation(tabVal);
                                 Ply ply = strategist.Run();
                                 value = ply.ToString();
 

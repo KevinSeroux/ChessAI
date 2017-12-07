@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,9 +25,6 @@ namespace ChessAI
 
         private uint castle;
         private uint ep;
-
-        Color side; // side to move
-        Color xside; //side to not move
 
         //representation Max
         public readonly static int[] MMPAWN = { -8, -9, -7, -16 }; //Pion
@@ -104,16 +102,20 @@ namespace ChessAI
                         -1, -1, -1, -1, -1, -1, -1, -1,
                         -1, -1, -1, -1, -1, -1, -1, -1
             };
-
-            side = Color.WHITE;
-            xside = Color.BLACK;
         }
 
-        public void changementTour()
+        public uint CountMen
         {
-            Color tourprecedent = side;
-            side = xside;
-            xside = tourprecedent;
+            get
+            {
+                uint count = 0;
+
+                for (uint i = 0; i < piece.Length; i++)
+                    if (piece[i] != 6)
+                        ++count;
+
+                return count;
+            }
         }
 
         public int[] getColor()
@@ -124,16 +126,6 @@ namespace ChessAI
         public int[] getPiece()
         {
             return piece;
-        }
-
-        public Color getSideToPlay()
-        {
-            return side;
-        }
-
-        public Color getSideNotToPlay()
-        {
-            return xside;
         }
 
         public int ligne(int index)
@@ -148,14 +140,74 @@ namespace ChessAI
 
         public Mailbox(Mailbox m)
         {
-            this.side = m.side;
-            this.xside = m.xside;
             this.color = new int[64];
             this.piece = new int[64];
 
             Array.Copy(m.piece, piece,64);
             Array.Copy(m.color, color, 64);
 
+        }
+
+        public Mailbox(int[] tabVal)
+        {
+            this.piece = new int[64];
+            this.color = new int[64];
+
+            for (uint i = 0; i < tabVal.Length; i++)
+            {
+                int val = tabVal[i];
+
+                int col;
+                if (val == 10 || val == -10)
+                    col = (int)Color.NONE;
+                else if (val < 0)
+                    col = (int)Color.BLACK;
+                else if (val == 0)
+                    col = (int)Color.NONE;
+                else
+                    col = (int)Color.WHITE;
+                color[i] = col;
+
+                int curPiece;
+                switch (Math.Abs(val))
+                {
+                    case 1:
+                        curPiece = 0;
+                        break;
+
+                    case 10: // TODO En passant
+                        curPiece = (int)Color.NONE; //TODO Rename to Piece
+                        break;
+
+                    case 21:
+                    case 22:
+                        curPiece = (int)Piece.ROOK;
+                        break;
+
+                    case 31:
+                    case 32:
+                        curPiece = (int)Piece.KNIGHT;
+                        break;
+
+                    case 4:
+                        curPiece = (int)Piece.BISHOP;
+                        break;
+
+                    case 5:
+                        curPiece = (int)Piece.QUEEN;
+                        break;
+
+                    case 6:
+                        curPiece = (int)Piece.KING;
+                        break;
+
+                    default:
+                        Debug.Assert(true, val + " unknown as piece type");
+                        curPiece = (int)Color.NONE;
+                        break;
+                }
+                piece[i] = curPiece;
+            }
         }
 
         /*

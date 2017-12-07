@@ -35,8 +35,11 @@ namespace ChessAI
             if (ply == null) // No results
             {
                 // Iterative deepening search
-                for (uint depth = 2; watch.ElapsedMilliseconds < 230; depth++)
+                for (uint depth = 2; watch.ElapsedMilliseconds < 10; depth++) //TODO
+                {
                     ply = NegaMax(depth);
+                    Console.WriteLine("Depth: " + depth + ", time: " + watch.ElapsedMilliseconds);
+                }
             }
 
             watch.Stop();
