@@ -158,6 +158,7 @@ namespace ChessAI
         {
             this.piece = new int[64];
             this.color = new int[64];
+            this.ep = null;
 
             for (int i = 0; i < tabVal.Length; i++)
             {
@@ -172,6 +173,7 @@ namespace ChessAI
                     col = (int)Color.NONE;
                 else
                     col = (int)Color.WHITE;
+
                 color[i] = col;
 
                 int curPiece;
@@ -185,7 +187,7 @@ namespace ChessAI
                         //curPiece = (int)Color.PAWN_EN_PASSANT; //TODO Rename to Piece
                         curPiece = (int)Color.NONE;
 
-                        Debug.Assert(ep.HasValue, "Mailbox conversion : Il y a plusieurs pion en passant sur le board! IMPOSSIBLE NON ?");
+                        Debug.Assert(!this.ep.HasValue, "Mailbox conversion : Il y a plusieurs pion en passant sur le board! IMPOSSIBLE NON ?");
                         //Il faut trouver le pion associé
                         if(tabPos[i] >= 41 && tabPos[i] <= 48)
                         {
@@ -248,7 +250,9 @@ namespace ChessAI
                     
             }
 
-            Debug.Assert(kingIndex64.HasValue, "On a pas trouvé le roi !");
+            //Si on trouve pas le roi c'est qu'il a été mangé par le mouvement
+            if(!kingIndex64.HasValue) return false;
+            //Debug.Assert(kingIndex64.HasValue, "On a pas trouvé le roi ! Il a déjà été manger, il faut arreter l'exploration !");
 
             int xside = (playerSide == Color.WHITE ? (int)Color.BLACK : (int)Color.WHITE);
 
@@ -264,7 +268,23 @@ namespace ChessAI
                     if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT)
                     {
                         if (color[n] == xside)
-                            return true;
+                        {
+                            //On regarde si la piece peut effectivement nous atteindre (via son type/deplacement)
+                            int pieceCheckPotentiel = piece[n];
+                            if (Mailbox.slide[pieceCheckPotentiel]) //Si ce n'est pas un pion, un roi ou un cavalier
+                            {
+                                int dirToCheck = Mailbox.offset[(int)Piece.QUEEN, j] * -1;
+                                for (int k = 0; k < Mailbox.offsets[pieceCheckPotentiel]; k++)
+                                {
+                                    if (Mailbox.offset[pieceCheckPotentiel, k] == dirToCheck)
+                                    {
+                                        return true;
+                                    }
+                                }
+                            }
+                            
+                        }
+                            
                         break;
                     }
                     
@@ -273,33 +293,28 @@ namespace ChessAI
             }
 
             //Il faut maintenant tester les cavaliers
-            for (int j = 0; j < Mailbox.offsets[(int)Piece.BISHOP]; ++j)
+            for (int j = 0; j < Mailbox.offsets[(int)Piece.KNIGHT]; ++j)
             { /* for all knight or ray directions */
                 for (int n = kingIndex64.Value; ;)
                 { /* starting with from square */
-                    n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[(int)Piece.BISHOP, j]]; /* next square along the ray j */
+                    n = Mailbox.tab120[Mailbox.tabPos[n] + Mailbox.offset[(int)Piece.KNIGHT, j]]; /* next square along the ray j */
                     if (n == -1) break; /* outside board */
-
-                    //Si on arrive sur une piece
-                    if (color[n] != (int)Color.NONE && color[n] != (int)Color.PAWN_EN_PASSANT)
-                    {
-                        if (color[n] == xside)
-                            return true;
-                        break;
-                    }
-
-                    if (!Mailbox.slide[(int)Piece.BISHOP]) break; /* next direction */
+                    
+                    if (color[n] == xside && piece[n] == (int)Piece.KNIGHT)
+                        return true;
+                    break;
+                    
                 }
             }
 
-            //Et maintenant les pions
+            //Les pions
             if(playerSide == Color.WHITE)
             {
                 //Manger Gauche
                 int n = Mailbox.tab120[Mailbox.tabPos[kingIndex64.Value] + Mailbox.offset[0, 1]];
                 if (n != -1)
                 {
-                    if (color[n] == (int)Color.BLACK)
+                    if (color[n] == (int)Color.BLACK && piece[n]==(int)Piece.PAWN)
                     {
                         return true;
                     }
@@ -309,7 +324,7 @@ namespace ChessAI
                 n = Mailbox.tab120[Mailbox.tabPos[kingIndex64.Value] + Mailbox.offset[0, 2]];
                 if (n != -1)
                 {
-                    if (color[n] == (int)Color.BLACK)
+                    if (color[n] == (int)Color.BLACK && piece[n] == (int)Piece.PAWN)
                     {
                         return true;
                     }
@@ -321,7 +336,7 @@ namespace ChessAI
                 int n = Mailbox.tab120[Mailbox.tabPos[kingIndex64.Value] - Mailbox.offset[0, 1]];
                 if (n != -1)
                 {
-                    if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                    if (color[n] == (int)Color.WHITE && piece[n] == (int)Piece.PAWN)
                     {
                         return true;
                     }
@@ -331,12 +346,14 @@ namespace ChessAI
                 n = Mailbox.tab120[Mailbox.tabPos[kingIndex64.Value] - Mailbox.offset[0, 2]];
                 if (n != -1)
                 {
-                    if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                    if (color[n] == (int)Color.WHITE && piece[n] == (int)Piece.PAWN)
                     {
                         return true;
                     }
                 }
             }
+
+            //TODO tester le roi !
 
 
             return false;
