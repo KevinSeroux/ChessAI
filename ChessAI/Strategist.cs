@@ -35,9 +35,9 @@ namespace ChessAI
             if (ply == null) // No results
             {
                 // Iterative deepening search
-                for (uint depth = 2; watch.ElapsedMilliseconds < 10; depth++) //TODO
+                for (uint depth = 2; watch.ElapsedMilliseconds < 6; depth++) //TODO
                 {
-                    ply = NegaMax(depth);
+                    ply = NegaScout(depth,int.MinValue,int.MaxValue);
                     Console.WriteLine("Depth: " + depth + ", time: " + watch.ElapsedMilliseconds);
                 }
             }
@@ -110,10 +110,11 @@ namespace ChessAI
 
             Ply bestPly = null;
             int bestScore = int.MinValue;
+            uint d = depth;
 
             foreach (Ply ply in ruler.GetPossiblePlies())
             {
-                int score = -RecursiveNegaScout(depth - 1, ply,alpha,beta);
+                int score = -RecursiveNegaScout(d - 1, ply,alpha,beta);
                 if (score > bestScore)
                 {
                     bestPly = ply;
@@ -127,29 +128,46 @@ namespace ChessAI
         private int RecursiveNegaScout(uint depth, Ply parentPly, int alpha, int beta)
         {
             board.Push(parentPly);
-
+            
             int best;
+            int score2;
 
-            WDL? wdl = tableReader.getWDL();
+            
+
+
+                WDL? wdl = tableReader.getWDL();
             if (wdl.HasValue)
                 best = evaluator.EvaluateWDL(wdl.Value);
 
             else 
             {
                 best = int.MinValue;
+                
 
                 if (depth == 0)
+                
                     best = evaluator.Evaluate();
+                
                 else
                 {
                     foreach (Ply ply in ruler.GetPossiblePlies())
                     {
-                        int score = RecursiveNegaScout(depth - 1, ply, -(alpha + 1), -alpha);
-                        if (score > alpha && score < beta && depth > 1) {
-                            int score2 = RecursiveNegaScout(depth-1,ply,-beta, -score);
-                            best = Math.Max(score, score2);
-                         }
+                        int score = RecursiveNegaScout(depth - 1, ply, -beta, -alpha);
+
+                        score2 = score;
+
+                        if (score > alpha && score < beta && depth > 1)
+                            
+                            score2 = RecursiveNegaScout(depth - 1, ply, -beta, -score);
+
                         
+                        if (score >= score2)
+                            best = score;
+                        else
+                            best = score2;
+                        
+
+
                     }
                 }
             }
