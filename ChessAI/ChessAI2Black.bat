@@ -1,1 +1,2 @@
-start /d "." ChessAI.exe black
+start "." ChessAI.exe black
+exit
