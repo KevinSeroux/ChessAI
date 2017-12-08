@@ -11,6 +11,8 @@ namespace ChessAI
     //TODO NegaScout
     class Strategist
     {
+        private const long timingMaxMs = 240; //TODO
+
         private Chessboard board;
         private Syzygy tableReader;
         private Evaluator evaluator;
@@ -35,7 +37,7 @@ namespace ChessAI
             if (ply == null) // No results
             {
                 // Iterative deepening search
-                for (uint depth = 2; watch.ElapsedMilliseconds < 6; depth++) //TODO
+                for (uint depth = 2; watch.ElapsedMilliseconds < timingMaxMs; depth++)
                 {
                     ply = NegaScout(depth,int.MinValue,int.MaxValue);
                     Console.WriteLine("Depth: " + depth + ", time: " + watch.ElapsedMilliseconds);
@@ -43,10 +45,10 @@ namespace ChessAI
             }
 
             watch.Stop();
-            /*Debug.Assert(
+            Debug.Assert(
                 watch.ElapsedMilliseconds < 250,
                 "IA took " + watch.ElapsedMilliseconds.ToString() + " which is more than 250ms to decide"
-            );*/
+            );
 
             return ply;
         }
@@ -91,6 +93,9 @@ namespace ChessAI
                 {
                     foreach (Ply ply in ruler.GetPossiblePlies())
                     {
+                        if (watch.ElapsedMilliseconds >= timingMaxMs)
+                            break;
+
                         int score = -RecursiveNegaMax(depth - 1, ply);
                         if (score > best)
                             best = score;
@@ -105,8 +110,7 @@ namespace ChessAI
 
         private Ply NegaScout(uint depth, int alpha, int beta)
         {
-            
-                Debug.Assert(depth >= 2);
+            Debug.Assert(depth >= 2);
 
             Ply bestPly = null;
             int bestScore = int.MinValue;
@@ -132,10 +136,7 @@ namespace ChessAI
             int best;
             int score2;
 
-            
-
-
-                WDL? wdl = tableReader.getWDL();
+            WDL? wdl = tableReader.getWDL();
             if (wdl.HasValue)
                 best = evaluator.EvaluateWDL(wdl.Value);
 
@@ -143,31 +144,25 @@ namespace ChessAI
             {
                 best = int.MinValue;
                 
-
                 if (depth == 0)
-                
                     best = evaluator.Evaluate();
-                
                 else
                 {
                     foreach (Ply ply in ruler.GetPossiblePlies())
                     {
-                        int score = RecursiveNegaScout(depth - 1, ply, -beta, -alpha);
+                        if (watch.ElapsedMilliseconds >= timingMaxMs)
+                            break;
 
+                        int score = RecursiveNegaScout(depth - 1, ply, -beta, -alpha);
                         score2 = score;
 
                         if (score > alpha && score < beta && depth > 1)
-                            
                             score2 = RecursiveNegaScout(depth - 1, ply, -beta, -score);
-
                         
                         if (score >= score2)
                             best = score;
                         else
                             best = score2;
-                        
-
-
                     }
                 }
             }
