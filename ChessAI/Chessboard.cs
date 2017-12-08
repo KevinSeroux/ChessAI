@@ -40,7 +40,7 @@ namespace ChessAI
         {
             get
             {
-                return 5; //TODO pos.CountMen
+                return pos.CountMen;
             }
         }
 
