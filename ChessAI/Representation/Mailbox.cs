@@ -438,12 +438,12 @@ namespace ChessAI
                 //Si on fait un mouvement et qu'il y a un EP alors on reset le EP (il est valable qu'un tour)
                 int? caseEnPassant = null;
                 //Il faut trouver le pion associé
-                if (tabPos[ep.Value] >= 41 && tabPos[ep.Value] <= 48)
+                if (tabPos[ep.Value] >= 51 && tabPos[ep.Value] <= 58)
                 {
                     //Noir
                     caseEnPassant = Mailbox.tab120[Mailbox.tabPos[ep.Value] + Mailbox.offset[0, 0]];
                 }
-                else if (tabPos[ep.Value] >= 71 && tabPos[ep.Value] <= 78)
+                else if (tabPos[ep.Value] >= 61 && tabPos[ep.Value] <= 68)
                 {
                     //blanc
                     caseEnPassant = Mailbox.tab120[Mailbox.tabPos[ep.Value] - Mailbox.offset[0, 0]];
