@@ -97,10 +97,9 @@ namespace ChessAI
                                 //Double "saut"
                                 if (Mailbox.tabPos[i] <= 88 && Mailbox.tabPos[i] >= 81)
                                 {
-
-                                    if ((color[n] == (int)Color.NONE) && (Mailbox.tabPos[n + Mailbox.offset[0, 0]] == (int)Color.NONE))
+                                    int caseEnPassant = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 0]];
+                                    if ((color[n] == (int)Color.NONE) && (color[caseEnPassant] == (int)Color.NONE))
                                     {
-                                        int caseEnPassant = Mailbox.tabPos[n + Mailbox.offset[0, 0]];
                                         mouvementPossible.Add(genMove(i, n, 0, caseEnPassant));
                                     }
                                 }
@@ -109,7 +108,7 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 0]];
                             if (n != -1)
                             {
-                                if (Mailbox.tabPos[n] == (int)Color.NONE)
+                                if (color[n] == (int)Color.NONE)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
@@ -144,10 +143,9 @@ namespace ChessAI
                             {
                                 if (Mailbox.tabPos[i] >= 31 && Mailbox.tabPos[i] <= 38)
                                 {
-
-                                    if (color[n] == (int)Color.NONE && (Mailbox.tabPos[n - Mailbox.offset[0, 0]] == (int)Color.NONE))
+                                    int caseEnPassant = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 0]];
+                                    if (color[n] == (int)Color.NONE && (color[caseEnPassant]== (int)Color.NONE))
                                     {
-                                        int caseEnPassant = Mailbox.tabPos[n - Mailbox.offset[0, 0]];
                                         mouvementPossible.Add(genMove(i, n, 0, caseEnPassant));
                                     }
                                 }

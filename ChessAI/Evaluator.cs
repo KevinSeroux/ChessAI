@@ -38,7 +38,7 @@ namespace ChessAI
                 //Si on arrive la c'est qu'on est le joueur qui a plus de roi
                 //Sinon faire une evaluation normale (car elle prend en compte le poids des pièce
                 //et que le roi à un gros poids normalement
-                return int.MinValue;
+                return int.MinValue+1;
             }
 
             return evaluateVersion3();
@@ -491,8 +491,8 @@ namespace ChessAI
                                 n = Mailbox.tab120[valeurPosition + Mailbox.offset[0, 3]];
                                 if (n != -1)
                                 {
-
-                                    if (color[n] == (int)Color.NONE && (Mailbox.tabPos[n + Mailbox.offset[0, 0]] == (int)Color.NONE))
+                                    int caseEntre = Mailbox.tab120[valeurPosition + Mailbox.offset[0, 0]];
+                                    if (color[n] == (int)Color.NONE && (color[caseEntre] == (int)Color.NONE))
                                     {
                                         valeurCouverture+=c;
                                     }
@@ -503,7 +503,7 @@ namespace ChessAI
                             n = Mailbox.tab120[valeurPosition + Mailbox.offset[0, 0]];
                             if (n != -1)
                             {
-                                if (Mailbox.tabPos[n] == (int)Color.NONE)
+                                if (color[n] == (int)Color.NONE)
                                 {
                                     valeurCouverture+=c;
                                 }
@@ -546,7 +546,8 @@ namespace ChessAI
                                 n = Mailbox.tab120[valeurPosition - Mailbox.offset[0, 3]];
                                 if (n != -1)
                                 {
-                                    if (color[n] == (int)Color.NONE && (Mailbox.tabPos[n - Mailbox.offset[0, 0]] == (int)Color.NONE))
+                                    int caseEntre = Mailbox.tab120[valeurPosition - Mailbox.offset[0, 0]];
+                                    if (color[n] == (int)Color.NONE && (color[caseEntre] == (int)Color.NONE))
                                     {
                                         valeurCouverture+=c;
                                     }
@@ -557,7 +558,7 @@ namespace ChessAI
                             n = Mailbox.tab120[valeurPosition - Mailbox.offset[0, 0]];
                             if (n != -1)
                             {
-                                if (Mailbox.tabPos[n] == (int)Color.NONE)
+                                if (color[n] == (int)Color.NONE)
                                 {
                                     valeurCouverture+=c;
                                 }

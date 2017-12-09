@@ -124,6 +124,10 @@ namespace ChessAI
                     bestScore = score;
                 }
             }
+            if(bestPly == null)
+            {
+                Console.WriteLine("Pas de mouvement trouvé");
+            }
 
             return bestPly;
         }
