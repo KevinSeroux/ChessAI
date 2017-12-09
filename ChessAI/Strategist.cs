@@ -124,10 +124,7 @@ namespace ChessAI
                     bestScore = score;
                 }
             }
-            if(bestPly == null)
-            {
-                Console.WriteLine("Pas de mouvement trouvé");
-            }
+            Debug.Assert(bestPly != null, "NegaScout est en train de retourner un mouvement nul");
 
             return bestPly;
         }
