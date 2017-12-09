@@ -106,6 +106,7 @@ namespace ChessAI
             };
 
             ep = null;
+            endGame = false;
         }
 
         public uint CountMen
@@ -151,6 +152,7 @@ namespace ChessAI
             Array.Copy(m.color, color, 64);
 
             this.ep = m.ep;
+            this.endGame = m.endGame;
 
         }
 
@@ -159,6 +161,7 @@ namespace ChessAI
             this.piece = new int[64];
             this.color = new int[64];
             this.ep = null;
+            this.endGame = false;
 
             for (int i = 0; i < tabVal.Length; i++)
             {
@@ -235,7 +238,14 @@ namespace ChessAI
             }
         }
 
-        public bool testCheck(Color playerSide)
+        public enum Check
+        {
+            NONE = 0, //Le joueur courant n'est pas en echec
+            CHECK = 1, //Le joueur courant est en echec
+            CHECKMATE =-1 //Le joueur adverse n'a plus de roi
+        }
+
+        public Check testCheck(Color playerSide)
         {
             int? kingIndex64 = null;
 
@@ -251,7 +261,7 @@ namespace ChessAI
             }
 
             //Si on trouve pas le roi c'est qu'il a été mangé par le mouvement
-            if(!kingIndex64.HasValue) return false;
+            if(!kingIndex64.HasValue) return Check.CHECKMATE;
             //Debug.Assert(kingIndex64.HasValue, "On a pas trouvé le roi ! Il a déjà été manger, il faut arreter l'exploration !");
 
             int xside = (playerSide == Color.WHITE ? (int)Color.BLACK : (int)Color.WHITE);
@@ -278,7 +288,7 @@ namespace ChessAI
                                 {
                                     if (Mailbox.offset[pieceCheckPotentiel, k] == dirToCheck)
                                     {
-                                        return true;
+                                        return Check.CHECK;
                                     }
                                 }
                             }
@@ -301,7 +311,7 @@ namespace ChessAI
                     if (n == -1) break; /* outside board */
                     
                     if (color[n] == xside && piece[n] == (int)Piece.KNIGHT)
-                        return true;
+                        return Check.CHECK;
                     break;
                     
                 }
@@ -316,7 +326,7 @@ namespace ChessAI
                 {
                     if (color[n] == (int)Color.BLACK && piece[n]==(int)Piece.PAWN)
                     {
-                        return true;
+                        return Check.CHECK;
                     }
                 }
 
@@ -326,7 +336,7 @@ namespace ChessAI
                 {
                     if (color[n] == (int)Color.BLACK && piece[n] == (int)Piece.PAWN)
                     {
-                        return true;
+                        return Check.CHECK;
                     }
                 }
             }
@@ -338,7 +348,7 @@ namespace ChessAI
                 {
                     if (color[n] == (int)Color.WHITE && piece[n] == (int)Piece.PAWN)
                     {
-                        return true;
+                        return Check.CHECK;
                     }
                 }
 
@@ -348,7 +358,7 @@ namespace ChessAI
                 {
                     if (color[n] == (int)Color.WHITE && piece[n] == (int)Piece.PAWN)
                     {
-                        return true;
+                        return Check.CHECK;
                     }
                 }
             }
@@ -356,7 +366,7 @@ namespace ChessAI
             //TODO tester le roi !
 
 
-            return false;
+            return Check.NONE;
         }
 
         /*
@@ -368,9 +378,16 @@ namespace ChessAI
         private Case captureEnPassant;
         */
 
+        public bool endGame
+        {
+            get; private set;
+        }
 
         public void ply(Ply p)
         {
+            if (p.lastPly)
+                endGame = true;
+
             int? testdep = p.from.getPosMailBox();
             int? testarr = p.to.getPosMailBox();
 

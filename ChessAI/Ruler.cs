@@ -21,13 +21,21 @@ namespace ChessAI
         public ICollection<Ply> GetPossiblePlies()
         {
             List<Ply> legalMove = new List<Ply>();
-            Mailbox temp = new Mailbox(board.GetMailbox());
+            if (board.GetMailbox().endGame)
+                return legalMove;
 
+            Mailbox temp = new Mailbox(board.GetMailbox());
+            Mailbox.Check c;
             foreach(Ply pseudo in generatePeudoLegalsMoves())
             {
                 temp.testPly(pseudo);
-                if (!temp.testCheck(board.GetTurn))
+                c = temp.testCheck(board.GetTurn);
+                if (c == Mailbox.Check.NONE)
                 {
+                    legalMove.Add(pseudo);
+                }else if(c == Mailbox.Check.CHECKMATE)
+                {
+                    pseudo.lastPly = true;
                     legalMove.Add(pseudo);
                 }
                 temp.testUnPly();

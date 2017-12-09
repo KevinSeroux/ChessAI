@@ -31,7 +31,6 @@ namespace ChessAI
         public Ply Run()
         {
             watch.Restart();
-
             // Syzygy end-game table
             Ply ply = tableReader.getBestPly();
             if (ply == null) // No results

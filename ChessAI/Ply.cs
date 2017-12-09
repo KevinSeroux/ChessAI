@@ -62,6 +62,7 @@ namespace ChessAI
         public Promotion promotion { get; private set; }
         public Case captureEnPassant { get; private set; }
         //public Case captureEnPassantCapture { get; private set; }
+        public bool lastPly { get; set; }
 
         public bool captureEP { get; private set; }
 
@@ -72,6 +73,7 @@ namespace ChessAI
             from = null;
             to = null;
             promotion = null;
+            lastPly = false;
         }
 
         public override String ToString()
@@ -105,6 +107,14 @@ namespace ChessAI
             newPly.from = from;
             newPly.to = to;
             return newPly;
+        }
+
+        static public Ply EatKing(uint from, uint to)
+        {
+            Ply newPly = Position(from, to);
+            newPly.lastPly = true;
+            return newPly;
+
         }
 
         static public Ply CastlingKingSide()
