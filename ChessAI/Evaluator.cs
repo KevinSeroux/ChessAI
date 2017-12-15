@@ -75,7 +75,7 @@ namespace ChessAI
 
                     if (p != (int)Piece.PAWN)
                     {
-                        /* piece or pawn */
+                        /* piece not pawn */
                         for (int j = 0; j < Mailbox.offsets[p]; ++j)
                         { /* for all knight or ray directions */
                             for (int n = i; ;)
@@ -261,7 +261,7 @@ namespace ChessAI
 
                     if (p != (int)Piece.PAWN)
                     {
-                        /* piece or pawn */
+                        /* piece not pawn */
                         for (int j = 0; j < Mailbox.offsets[p]; ++j)
                         { /* for all knight or ray directions */
                             for (int n = i; ;)
@@ -450,7 +450,7 @@ namespace ChessAI
 
                     if (p != (int)Piece.PAWN)
                     {
-                        /* piece or pawn */
+                        /* piece not pawn */
                         for (int j = 0; j < Mailbox.offsets[p]; ++j)
                         { /* for all knight or ray directions */
                             for (int n = i; ;)
@@ -462,11 +462,11 @@ namespace ChessAI
                                 {
                                     if (color[n] != c)
                                     {
-                                        valeurAttaque += piecesValues[p]*c;//(c * piecesValues[piece[n]]);
+                                        valeurAttaque += piecesValues[piece[n]]*c;//(c * piecesValues[piece[n]]);
                                     }
-                                    else
+                                    else if(piece[n] != (int)Piece.KING)
                                     {
-                                        valeurProtection += piecesValues[p]*c;// (c * piecesValues[piece[n]]);
+                                        valeurProtection += piecesValues[piece[n]] *c;// (c * piecesValues[piece[n]]);
                                     }
                                     break;
                                 }
@@ -517,11 +517,11 @@ namespace ChessAI
                             {
                                 if (color[n] == (int)Color.BLACK)
                                 {
-                                    valeurAttaque += piecesValues[p]*c;// (c * piecesValues[piece[n]]); ;
+                                    valeurAttaque += piecesValues[piece[n]]*c;// (c * piecesValues[piece[n]]); ;
                                 }
-                                else if (color[n] == (int)Color.WHITE)
+                                else if (color[n] == (int)Color.WHITE && piece[n] != (int)Piece.KING)
                                 {
-                                    valeurProtection += piecesValues[p]*c;// (c * piecesValues[piece[n]]); ;
+                                    valeurProtection += piecesValues[piece[n]]*c;// (c * piecesValues[piece[n]]); ;
                                 }
                             }
 
@@ -531,11 +531,11 @@ namespace ChessAI
                             {
                                 if (color[n] == (int)Color.BLACK)
                                 {
-                                    valeurAttaque += piecesValues[p]*c;// (c * piecesValues[piece[n]]); ;
+                                    valeurAttaque += piecesValues[piece[n]]*c;// (c * piecesValues[piece[n]]); ;
                                 }
-                                else if (color[n] == (int)Color.WHITE)
+                                else if (color[n] == (int)Color.WHITE && piece[n] != (int)Piece.KING)
                                 {
-                                    valeurProtection += piecesValues[p]*c;// (c * piecesValues[piece[n]]); ;
+                                    valeurProtection += piecesValues[piece[n]]*c;// (c * piecesValues[piece[n]]); ;
                                 }
                             }
 
@@ -565,16 +565,17 @@ namespace ChessAI
                                 }
                             }
 
+                            //Manger gauche
                             n = Mailbox.tab120[valeurPosition - Mailbox.offset[0, 1]];
                             if (n != -1)
                             {
                                 if (color[n] == (int)Color.WHITE)
                                 {
-                                    valeurAttaque += piecesValues[p]*c;// (c * piecesValues[piece[n]]); ;
+                                    valeurAttaque += piecesValues[piece[n]]*c;// (c * piecesValues[piece[n]]); ;
                                 }
-                                else if (color[n] == (int)Color.BLACK)
+                                else if (color[n] == (int)Color.BLACK && piece[n] != (int)Piece.KING)
                                 {
-                                    valeurProtection += piecesValues[p]*c;// (c * piecesValues[piece[n]]); ;
+                                    valeurProtection += piecesValues[piece[n]]*c;// (c * piecesValues[piece[n]]); ;
                                 }
                             }
 
@@ -584,11 +585,11 @@ namespace ChessAI
                             {
                                 if (color[n] == (int)Color.WHITE)
                                 {
-                                    valeurAttaque += piecesValues[p]*c;// (c * piecesValues[piece[n]]); ;
+                                    valeurAttaque += piecesValues[piece[n]]*c;// (c * piecesValues[piece[n]]); ;
                                 }
-                                else if (color[n] == (int)Color.BLACK)
+                                else if (color[n] == (int)Color.BLACK && piece[n] != (int)Piece.KING)
                                 {
-                                    valeurProtection += piecesValues[p]*c;// (c * piecesValues[piece[n]]); ;
+                                    valeurProtection += piecesValues[piece[n]]*c;// (c * piecesValues[piece[n]]); ;
                                 }
                             }
                         }
@@ -596,11 +597,15 @@ namespace ChessAI
                 }
             }
 
+            // Ponderation
+            valeurPiece *= 100;
+            valeurCouverture *= 20;
+            valeurProtection *= 0.2;
+            valeurAttaque *= 4;
 
+            int eval = (int)((valeurPiece + valeurCouverture + valeurProtection + valeurAttaque)) * side;
 
-            int eval = (int)((10 * valeurPiece + 2 * valeurCouverture + 0.2 * valeurProtection + 4 * valeurAttaque)) * side;
-
-            //Console.WriteLine("Evaluation {1}: {0} , piece = {2}, couverture = {3}, protection = {4}, attaque = {5}", eval,side,valeurPiece,valeurCouverture,valeurProtection,valeurAttaque);
+            Console.WriteLine("Evaluation {1}: {0} , piece = {2}, couverture = {3}, protection = {4}, attaque = {5}", eval,side,valeurPiece,valeurCouverture,valeurProtection,valeurAttaque);
             return eval;
             //return valeurAttaqueW + valeurCouvertureW + valeurPiece + valeurProtectionW;
             //return (new Random()).Next();

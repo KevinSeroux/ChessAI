@@ -314,7 +314,7 @@ namespace ChessAI
                         {
                             //On regarde si la piece peut effectivement nous atteindre (via son type/deplacement)
                             int pieceCheckPotentiel = piece[n];
-                            if (Mailbox.slide[pieceCheckPotentiel]) //Si ce n'est pas un pion, un roi ou un cavalier
+                            if (Mailbox.slide[pieceCheckPotentiel] || pieceCheckPotentiel == (int)Piece.KING) //Si ce n'est pas un pion, un roi ou un cavalier
                             {
                                 int dirToCheck = Mailbox.offset[(int)Piece.QUEEN, j] * -1;
                                 for (int k = 0; k < Mailbox.offsets[pieceCheckPotentiel]; k++)

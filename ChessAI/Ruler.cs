@@ -64,7 +64,7 @@ namespace ChessAI
                     int p = piece[i];
 
                     if (p != (int)Piece.PAWN)
-                    { /* piece or pawn */
+                    { /* piece not pawn */
                         for (int j = 0; j < Mailbox.offsets[p]; ++j)
                         { /* for all knight or ray directions */
                             for (int n = i; ;)
