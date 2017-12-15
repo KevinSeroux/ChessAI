@@ -23,9 +23,10 @@ namespace ChessAI
         {
             this.board = board;
         }
-
-        //Valeur des pièces Pawn/Knight/Bichop/Rook/Queen/King
-        private readonly static double[] piecesValues = { 1.0, 3.0, 3.0, 5.0, 8.0, 20.0 };
+        
+        //Valeur des pièces Pawn/Knight/Bishop/Rook/Queen/King
+        private readonly static double[] piecesValues = { 100, 320, 325, 500, 975, 32767 };
+        
         //TODO Ameliorer en prenant en compte les pawn doubled/blocked/isolated
         //TODO Ameliorer en prenant en comptre le nombre de coups possibles ?
         public int Evaluate()

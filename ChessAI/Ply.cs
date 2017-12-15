@@ -143,6 +143,12 @@ namespace ChessAI
             return newPly;
         }
 
+        static public Ply PromoteQueen(Ply ply)
+        {
+            ply.promotion = new QueenPromotion();
+            return ply;
+        }
+
         static public Ply PromoteKnight(uint from, uint to)
         {
             return PromoteKnight(new Case(from), new Case(to));
@@ -153,6 +159,12 @@ namespace ChessAI
             Ply newPly = Position(from, to);
             newPly.promotion = new KnightPromotion();
             return newPly;
+        }
+
+        static public Ply PromoteKnight(Ply ply)
+        {
+            ply.promotion = new KnightPromotion();
+            return ply;
         }
 
         static public Ply PromoteRook(uint from, uint to)
@@ -167,6 +179,12 @@ namespace ChessAI
             return newPly;
         }
 
+        static public Ply PromoteRook(Ply ply)
+        {
+            ply.promotion = new RookPromotion();
+            return ply;
+        }
+
         static public Ply PromoteBishop(uint from, uint to)
         {
             return PromoteBishop(new Case(from), new Case(to));
@@ -177,6 +195,12 @@ namespace ChessAI
             Ply newPly = Position(from, to);
             newPly.promotion = new BishopPromotion();
             return newPly;
+        }
+
+        static public Ply PromoteBishop(Ply ply)
+        {
+            ply.promotion = new BishopPromotion();
+            return ply;
         }
 
         static public Ply EnPassant(uint from, uint to, uint capturePossible, bool captureEffective)

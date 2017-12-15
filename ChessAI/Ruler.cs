@@ -279,48 +279,11 @@ namespace ChessAI
         private Ply genMovePromotion(int depart, int arrivee, Color c)
         {
             string dp = Mailbox.tabCoord[depart];
+            Case from = Case.BuildCaseMailBox(depart, dp);
             string arr = Mailbox.tabCoord[arrivee];
+            Case to = Case.BuildCaseMailBox(depart, arr);
 
-            int pieceDemande = -1;
-            if(c == Color.WHITE)
-            {
-                int[] pieceVivante = board.GetMailbox().etatPieceBlanche;
-                for(int i = pieceVivante.Length-2; i >=1; i--)
-                {
-                    if(pieceVivante[i] != Mailbox.etatInitialPiece[i])
-                    {
-                        pieceDemande = i;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                int[] pieceVivante = board.GetMailbox().etatPieceNoir;
-                for (int i = pieceVivante.Length - 2; i >= 1; i--)
-                {
-                    if (pieceVivante[i] != Mailbox.etatInitialPiece[i])
-                    {
-                        pieceDemande = i;
-                        break;
-                    }
-                }
-            }
-
-            switch (pieceDemande)
-            {
-                case 4:
-                    return Ply.PromoteQueen(Case.BuildCaseMailBox(depart,dp), Case.BuildCaseMailBox(arrivee,arr));
-                case 3:
-                    return Ply.PromoteRook(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
-                case 2:
-                    return Ply.PromoteBishop(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
-                case 1:
-                    return Ply.PromoteKnight(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
-                default:
-                    Debug.Assert(false,"On a pas trouvé la piece qu'on pouvait promouvoir");
-                    return null;
-            }
+            return Ply.PromoteQueen(from, to);
         }
     }
 }

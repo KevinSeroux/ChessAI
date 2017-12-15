@@ -11,7 +11,7 @@ namespace ChessAI
     //TODO NegaScout
     class Strategist
     {
-        private const long timingMaxMs = 250; //TODO
+        private const long timingMaxMs = 240;
 
         private Chessboard board;
         private Syzygy tableReader;
