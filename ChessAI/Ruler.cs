@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace ChessAI
 {
@@ -109,11 +110,11 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 0]];
                             if (n != -1)
                             {
-                                if(n<=15 && n>=8) //Dernière ligne
+                                if(n<=7 && n>=0) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.NONE)
-                                        if (countPieceNoir != Mailbox.initialCount)
-                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                        if (countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMovePromotion(i, n, Color.WHITE));
                                 }
                                 else if (color[n] == (int)Color.NONE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
@@ -125,11 +126,11 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 1]];
                             if (n != -1)
                             {
-                                if (n <= 15 && n >= 8) //Dernière ligne
+                                if (n <= 7 && n >= 0) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.BLACK )
-                                        if (countPieceNoir != Mailbox.initialCount)
-                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                        if (countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMovePromotion(i, n, Color.WHITE));
                                 }
                                 else
                                 if (color[n] == (int)Color.BLACK || (color[n] == (int)Color.PAWN_EN_PASSANT && n < 40))
@@ -142,11 +143,11 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 2]];
                             if (n != -1)
                             {
-                                if (n <= 15 && n >= 8) //Dernière ligne
+                                if (n <= 7 && n >= 0) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.BLACK)
-                                        if (countPieceNoir != Mailbox.initialCount)
-                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                        if (countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMovePromotion(i, n, Color.WHITE));
                                 }
                                 else
                                 if (color[n] == (int)Color.BLACK || (color[n] == (int)Color.PAWN_EN_PASSANT && n < 40))
@@ -176,12 +177,12 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 0]];
                             if (n != -1)
                             {
-                                if (n <= 55 && n >= 48) //Dernière ligne
+                                if (n <= 63 && n >= 56) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.NONE)
                                     {
-                                        if (countPieceBlanche != Mailbox.initialCount)
-                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                        if (countPieceNoir != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMovePromotion(i, n, Color.BLACK));
                                     }
                                 }
                                 else
@@ -195,12 +196,12 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 1]];
                             if (n != -1)
                             {
-                                if (n <= 55 && n >= 48) //Dernière ligne
+                                if (n <= 63 && n >= 56) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.WHITE)
                                     {
-                                        if (countPieceBlanche != Mailbox.initialCount)
-                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                        if (countPieceNoir != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMovePromotion(i, n,Color.BLACK));
                                     }
                                 }
                                 else
@@ -214,12 +215,12 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 2]];
                             if (n != -1)
                             {
-                                if (n <= 55 && n >= 48) //Dernière ligne
+                                if (n <= 63 && n >= 56) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.WHITE)
                                     {
-                                        if (countPieceBlanche != Mailbox.initialCount)
-                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                        if (countPieceNoir != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMovePromotion(i, n, Color.BLACK));
                                     }
                                 }
                                 else
@@ -274,6 +275,53 @@ namespace ChessAI
             //int valeur = evaluateBoard(LIGHT);
 
             //Console.WriteLine("Mouvement possible {2} : {0}, {1}", dp, arr, piece[i]);
+        }
+
+        private Ply genMovePromotion(int depart, int arrivee, Color c)
+        {
+            string dp = Mailbox.tabCoord[depart];
+            string arr = Mailbox.tabCoord[arrivee];
+
+            int pieceDemande = -1;
+            if(c == Color.WHITE)
+            {
+                int[] pieceVivante = board.GetMailbox().etatPieceBlanche;
+                for(int i = pieceVivante.Length-2; i >=1; i--)
+                {
+                    if(pieceVivante[i] != Mailbox.etatInitialPiece[i])
+                    {
+                        pieceDemande = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                int[] pieceVivante = board.GetMailbox().etatPieceNoir;
+                for (int i = pieceVivante.Length - 2; i >= 1; i--)
+                {
+                    if (pieceVivante[i] != Mailbox.etatInitialPiece[i])
+                    {
+                        pieceDemande = i;
+                        break;
+                    }
+                }
+            }
+
+            switch (pieceDemande)
+            {
+                case 4:
+                    return Ply.PromoteQueen(Case.BuildCaseMailBox(depart,dp), Case.BuildCaseMailBox(arrivee,arr));
+                case 3:
+                    return Ply.PromoteRook(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
+                case 2:
+                    return Ply.PromoteBishop(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
+                case 1:
+                    return Ply.PromoteKnight(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
+                default:
+                    Debug.Assert(false,"On a pas trouvé la piece qu'on pouvait promouvoir");
+                    return null;
+            }
         }
     }
 }

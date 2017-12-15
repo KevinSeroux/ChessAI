@@ -147,11 +147,15 @@ namespace ChessAI
         {
             this.color = new int[64];
             this.piece = new int[64];
+            this.etatPieceBlanche = new int[6];
+            this.etatPieceNoir = new int[6];
             this.countPieceBlanche = m.countPieceBlanche;
             this.countPieceNoir = m.countPieceNoir;
 
             Array.Copy(m.piece, piece,64);
             Array.Copy(m.color, color, 64);
+            Array.Copy(m.etatPieceBlanche, etatPieceBlanche, 6);
+            Array.Copy(m.etatPieceNoir, etatPieceNoir, 6);
 
             this.ep = m.ep;
             this.endGame = m.endGame;
@@ -162,12 +166,18 @@ namespace ChessAI
         public static int initialCount = 8;
         public int countPieceNoir = 8;
         public int countPieceBlanche = 8;
+        public static int[] etatInitialPiece = { 0, 2, 2, 2, 1, 1 };
+        public int[] etatPieceNoir = { 0, 2, 2, 2, 1, 1 };
+        public int[] etatPieceBlanche = { 0, 2, 2, 2, 1, 1 };
+        private int[] tabVide = { 0, 0, 0, 0, 0, 0 };
         public Mailbox(int[] tabVal)
         {
             this.countPieceBlanche = 0;
             this.countPieceNoir = 0;
             this.piece = new int[64];
             this.color = new int[64];
+            Array.Copy(tabVide, this.etatPieceBlanche, 6);
+            Array.Copy(tabVide, this.etatPieceNoir, 6);
             this.ep = null;
             this.endGame = false;
 
@@ -248,9 +258,15 @@ namespace ChessAI
                 if (curPiece != (int)Piece.PAWN)
                 {
                     if (col == (int)Color.WHITE)
+                    {
                         countPieceBlanche++;
+                        etatPieceBlanche[curPiece]++;
+                    }
                     else if (col == (int)Color.BLACK)
+                    {
                         countPieceNoir++;
+                        etatPieceNoir[curPiece]++;
+                    }
                 }
             }
         }
@@ -430,10 +446,12 @@ namespace ChessAI
                 if (color[arr] == (int)Color.WHITE)
                 {
                     countPieceBlanche--;
+                    etatPieceBlanche[piece[arr]]--;
                 }
                 else if (color[arr] == (int)Color.BLACK)
                 {
                     countPieceNoir--;
+                    etatPieceNoir[piece[arr]]--;
                 }
             }
 
@@ -505,6 +523,9 @@ namespace ChessAI
 
         int[] savePiece = new int[64];
         int[] saveColor = new int[64];
+        int[] saveEtatPieceBlanche = new int[6];
+        int[] saveEtatPieceNoir = new int[6];
+
         int saveCountW;
         int saveCountB;
         int? saveEp;
@@ -512,6 +533,8 @@ namespace ChessAI
         {
             Array.Copy(piece, savePiece, 64);
             Array.Copy(color, saveColor, 64);
+            Array.Copy(etatPieceBlanche, saveEtatPieceBlanche, 6);
+            Array.Copy(etatPieceNoir, saveEtatPieceNoir, 6);
             saveCountW = countPieceBlanche;
             saveCountB = countPieceNoir;
             if (ep.HasValue) saveEp = ep.Value;
@@ -523,6 +546,8 @@ namespace ChessAI
         {
             Array.Copy(savePiece, piece, 64);
             Array.Copy(saveColor, color, 64);
+            Array.Copy(saveEtatPieceBlanche, etatPieceBlanche, 6);
+            Array.Copy(saveEtatPieceNoir, etatPieceNoir, 6);
             countPieceNoir = saveCountB;
             countPieceBlanche = saveCountW;
             if (saveEp.HasValue) ep = saveEp.Value;
