@@ -156,6 +156,10 @@ namespace ChessAI
 
         }
 
+
+        public static int initialCount = 7;
+        public static int countPieceNoir = 7;
+        public static int countPieceBlanche = 7;
         public Mailbox(int[] tabVal)
         {
             this.piece = new int[64];
@@ -235,6 +239,15 @@ namespace ChessAI
                         break;
                 }
                 piece[i] = curPiece;
+
+
+                if (curPiece != (int)Piece.PAWN)
+                {
+                    if (col == (int)Color.WHITE)
+                        countPieceBlanche++;
+                    else
+                        countPieceNoir++;
+                }
             }
         }
 
@@ -408,8 +421,19 @@ namespace ChessAI
                 }
             }
 
+            if (piece[arr] != (int)Piece.PAWN)
+            {
+                if (color[arr] == (int)Color.WHITE)
+                {
+                    countPieceBlanche--;
+                }
+                else
+                {
+                    countPieceNoir--;
+                }
+            }
 
-        color[arr] = color[dep];
+            color[arr] = color[dep];
             color[dep] = (int)Color.NONE;
 
             piece[arr] = piece[dep];
@@ -477,10 +501,17 @@ namespace ChessAI
 
         int[] savePiece = new int[64];
         int[] saveColor = new int[64];
+        int saveCountW;
+        int saveCountB;
+        int? saveEp;
         public void testPly(Ply p)
         {
             Array.Copy(piece, savePiece, 64);
             Array.Copy(color, saveColor, 64);
+            saveCountW = countPieceBlanche;
+            saveCountB = countPieceNoir;
+            if (ep.HasValue) saveEp = ep.Value;
+            else saveEp = null;
             this.ply(p);
         }
 
@@ -488,6 +519,10 @@ namespace ChessAI
         {
             Array.Copy(savePiece, piece, 64);
             Array.Copy(saveColor, color, 64);
+            countPieceNoir = saveCountB;
+            countPieceBlanche = saveCountW;
+            if (saveEp.HasValue) ep = saveEp.Value;
+            else ep = null;
         }
     }
 }

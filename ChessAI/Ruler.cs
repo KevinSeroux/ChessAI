@@ -108,7 +108,13 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 0]];
                             if (n != -1)
                             {
-                                if (color[n] == (int)Color.NONE)
+                                if(n<=15 && n>=8) //Dernière ligne
+                                {
+                                    if (color[n] == (int)Color.NONE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                }
+                                else if (color[n] == (int)Color.NONE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
@@ -118,7 +124,14 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 1]];
                             if (n != -1)
                             {
-                                if (color[n] == (int)Color.BLACK)
+                                if (n <= 15 && n >= 8) //Dernière ligne
+                                {
+                                    if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                }
+                                else
+                                if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
@@ -128,7 +141,14 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] + Mailbox.offset[0, 2]];
                             if (n != -1)
                             {
-                                if (color[n] == (int)Color.BLACK)
+                                if (n <= 15 && n >= 8) //Dernière ligne
+                                {
+                                    if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                }
+                                else
+                                if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
@@ -155,7 +175,16 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 0]];
                             if (n != -1)
                             {
-                                if (color[n] == (int)Color.NONE)
+                                if (n <= 55 && n >= 48) //Dernière ligne
+                                {
+                                    if (color[n] == (int)Color.NONE)
+                                    {
+                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                    }
+                                }
+                                else
+                                   if (color[n] == (int)Color.NONE)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
@@ -165,6 +194,15 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 1]];
                             if (n != -1)
                             {
+                                if (n <= 55 && n >= 48) //Dernière ligne
+                                {
+                                    if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                    {
+                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                    }
+                                }
+                                else
                                 if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1, -1));
@@ -175,6 +213,15 @@ namespace ChessAI
                             n = Mailbox.tab120[Mailbox.tabPos[i] - Mailbox.offset[0, 2]];
                             if (n != -1)
                             {
+                                if (n <= 55 && n >= 48) //Dernière ligne
+                                {
+                                    if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                    {
+                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                            mouvementPossible.Add(genMove(i, n, 0, -1));
+                                    }
+                                }
+                                else
                                 if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1, -1));

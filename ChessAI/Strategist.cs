@@ -110,7 +110,6 @@ namespace ChessAI
         private Ply NegaScout(uint depth, int alpha, int beta)
         {
             Debug.Assert(depth >= 2);
-
             Ply bestPly = null;
             int bestScore = int.MinValue;
             uint d = depth;
