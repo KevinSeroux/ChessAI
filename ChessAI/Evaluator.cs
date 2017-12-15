@@ -605,7 +605,7 @@ namespace ChessAI
 
             int eval = (int)((valeurPiece + valeurCouverture + valeurProtection + valeurAttaque)) * side;
 
-            Console.WriteLine("Evaluation {1}: {0} , piece = {2}, couverture = {3}, protection = {4}, attaque = {5}", eval,side,valeurPiece,valeurCouverture,valeurProtection,valeurAttaque);
+            //Console.WriteLine("Evaluation {1}: {0} , piece = {2}, couverture = {3}, protection = {4}, attaque = {5}", eval,side,valeurPiece,valeurCouverture,valeurProtection,valeurAttaque);
             return eval;
             //return valeurAttaqueW + valeurCouvertureW + valeurPiece + valeurProtectionW;
             //return (new Random()).Next();

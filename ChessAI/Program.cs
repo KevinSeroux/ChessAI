@@ -126,10 +126,10 @@ namespace ChessAI
                             mutexStartAI.ReleaseMutex();
 
                             watch.Stop();
-                            /*Debug.Assert(
+                            Debug.Assert(
                                 watch.ElapsedMilliseconds < 250,
                                 "IA took " + watch.ElapsedMilliseconds.ToString() + " which is more than 250ms to decide"
-                            );*/
+                            );
                         }
                     }
                 }

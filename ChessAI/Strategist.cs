@@ -30,11 +30,11 @@ namespace ChessAI
 
         public Ply Run()
         {
-            Console.WriteLine("Avant : B" + board.GetMailbox().countPieceBlanche + ", N " + board.GetMailbox().countPieceNoir);
+            /*Console.WriteLine("Avant : B" + board.GetMailbox().countPieceBlanche + ", N " + board.GetMailbox().countPieceNoir);
             foreach(int elmt in board.GetMailbox().etatPieceBlanche)
             {
                 Console.Write(elmt + " ");
-            }
+            }*/
             // Syzygy end-game table
             Ply ply = tableReader.getBestPly();
             if (ply == null) // No results
@@ -45,18 +45,18 @@ namespace ChessAI
                     Ply tempPly = NegaScout(depth, int.MinValue, int.MaxValue);
                     if (tempPly != null)
                         ply = tempPly;
-                    Console.WriteLine("Depth: " + depth + ", time: " + watch.ElapsedMilliseconds);
+                    //Console.WriteLine("Depth: " + depth + ", time: " + watch.ElapsedMilliseconds);
                 }
             }
 
             Debug.Assert(ply != null, "ply is null");
 
-            Console.WriteLine("Apres : B" + board.GetMailbox().countPieceBlanche + ", N " + board.GetMailbox().countPieceNoir);
+            /*Console.WriteLine("Apres : B" + board.GetMailbox().countPieceBlanche + ", N " + board.GetMailbox().countPieceNoir);
             foreach (int elmt in board.GetMailbox().etatPieceBlanche)
             {
                 Console.Write(elmt + " ");
             }
-            Console.WriteLine("Ply : " + ply);
+            Console.WriteLine("Ply : " + ply);*/
             return ply;
         }
 
