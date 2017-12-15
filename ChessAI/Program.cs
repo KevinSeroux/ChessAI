@@ -12,6 +12,7 @@ namespace ChessAI
     {
         private static Chessboard board;
         private static Strategist strategist;
+        private static Stopwatch watch;
 
         static void Init()
         {
@@ -19,7 +20,8 @@ namespace ChessAI
             board = new Chessboard();
             Syzygy tableReader = new Syzygy(board, "data");
             Evaluator evaluator = new Evaluator(board);
-            strategist = new Strategist(board, evaluator, tableReader);
+            watch = new Stopwatch();
+            strategist = new Strategist(board, evaluator, tableReader, watch);
         }
 
         static void Main(string[] args)
@@ -79,6 +81,8 @@ namespace ChessAI
                             mutexAI.WaitOne();
                             mutexStartAI.WaitOne();
 
+                            watch.Restart();
+
                             using (var accessor = mmf.CreateViewAccessor())
                             {
                                 ushort Size = accessor.ReadUInt16(0);
@@ -89,7 +93,7 @@ namespace ChessAI
                                 if (value == "stop") stop = true;
                                 else
                                 {
-                                    Console.WriteLine(value);
+                                    //Console.WriteLine(value);
                                     String[] substrings = value.Split(',');
                                     for (int i = 0; i < substrings.Length; i++)
                                     {
@@ -116,10 +120,16 @@ namespace ChessAI
                                     byte[] Buffer = ASCIIEncoding.ASCII.GetBytes(value);
                                     accessor.Write(0, (ushort)Buffer.Length);
                                     accessor.WriteArray(0 + 2, Buffer, 0, Buffer.Length);
-                                }
+                                };
                             }
                             mutexAI.ReleaseMutex();
                             mutexStartAI.ReleaseMutex();
+
+                            watch.Stop();
+                            Debug.Assert(
+                                watch.ElapsedMilliseconds < 250,
+                                "IA took " + watch.ElapsedMilliseconds.ToString() + " which is more than 250ms to decide"
+                            );
                         }
                     }
                 }
@@ -129,6 +139,10 @@ namespace ChessAI
                 Console.WriteLine("Memory-mapped file does not exist. Run Process A first.");
                 Console.ReadLine();
             }
+
+#if DEBUG
+            Console.ReadLine();
+#endif
         }
     }
 }

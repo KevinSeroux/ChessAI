@@ -11,7 +11,7 @@ namespace ChessAI
     //TODO NegaScout
     class Strategist
     {
-        private const long timingMaxMs = 240; //TODO
+        private const long timingMaxMs = 245; //TODO
 
         private Chessboard board;
         private Syzygy tableReader;
@@ -19,18 +19,17 @@ namespace ChessAI
         private Ruler ruler;
         private Stopwatch watch;
 
-        public Strategist(Chessboard board, Evaluator evaluator, Syzygy tableReader)
+        public Strategist(Chessboard board, Evaluator evaluator, Syzygy tableReader, Stopwatch watch)
         {
             this.board = board;
             this.evaluator = evaluator;
             this.ruler = new Ruler(board);
             this.tableReader = tableReader;
-            this.watch = new Stopwatch();
+            this.watch = watch;
         }
 
         public Ply Run()
         {
-            watch.Restart();
             // Syzygy end-game table
             Ply ply = tableReader.getBestPly();
             if (ply == null) // No results
@@ -38,16 +37,14 @@ namespace ChessAI
                 // Iterative deepening search
                 for (uint depth = 2; watch.ElapsedMilliseconds < timingMaxMs; depth++)
                 {
-                    ply = NegaScout(depth,int.MinValue,int.MaxValue);
+                    Ply tempPly = NegaScout(depth, int.MinValue, int.MaxValue);
+                    if (tempPly != null)
+                        ply = tempPly;
                     Console.WriteLine("Depth: " + depth + ", time: " + watch.ElapsedMilliseconds);
                 }
             }
 
-            watch.Stop();
-            Debug.Assert(
-                watch.ElapsedMilliseconds < 250,
-                "IA took " + watch.ElapsedMilliseconds.ToString() + " which is more than 250ms to decide"
-            );
+            Debug.Assert(ply != null, "ply is null");
 
             return ply;
         }
@@ -61,6 +58,9 @@ namespace ChessAI
             
             foreach (Ply ply in ruler.GetPossiblePlies())
             {
+                if (watch.ElapsedMilliseconds >= timingMaxMs)
+                    break;
+
                 int score = -RecursiveNegaMax(depth - 1, ply);
                 if (score > bestScore)
                 {
@@ -117,6 +117,9 @@ namespace ChessAI
 
             foreach (Ply ply in ruler.GetPossiblePlies())
             {
+                if (watch.ElapsedMilliseconds >= timingMaxMs)
+                    break;
+
                 int score = -RecursiveNegaScout(d - 1, ply,alpha,beta);
                 if (score > bestScore)
                 {
@@ -124,7 +127,6 @@ namespace ChessAI
                     bestScore = score;
                 }
             }
-            Debug.Assert(bestPly != null, "NegaScout est en train de retourner un mouvement nul");
 
             return bestPly;
         }
