@@ -243,7 +243,6 @@ namespace ChessAI
             string dp = Mailbox.tabCoord[depart];
             string arr = Mailbox.tabCoord[arrivee];
 
-
             Ply p = null;
 
             //Generation d'une case EN_PASSANT car double saut

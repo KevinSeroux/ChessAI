@@ -504,6 +504,7 @@ namespace ChessAI
             }
 
 
+            //Je sais pas trop l'impacte ici
             if(p.promotion != null)
             {
                 piece[arr] = p.promotion.piece;
