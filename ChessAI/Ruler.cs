@@ -198,22 +198,26 @@ namespace ChessAI
             Ply p = null;
 
             //Generation d'une case EN_PASSANT car double saut
-            if(v == 0 && enPassant != -1)
+            if (enPassant != -1)
             {
-                string ep = Mailbox.tabCoord[enPassant];
-                p = Ply.EnPassant(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr), Case.BuildCaseMailBox(enPassant, ep), false);
-            }
-            //On mange un pion via la case en Passant
-            else if(v == 1 && board.GetMailbox().getColor()[arrivee] == (int)Color.PAWN_EN_PASSANT)
-            {
-                string ep = Mailbox.tabCoord[enPassant];
-                p = Ply.EnPassant(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr), Case.BuildCaseMailBox(enPassant, ep), true);
+                if (v == 0)
+                {
+                    string ep = Mailbox.tabCoord[enPassant];
+                    p = Ply.EnPassant(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr), Case.BuildCaseMailBox(enPassant, ep), false);
+                    return p;
+                }
+                //On mange un pion via la case en Passant
+                else if (v == 1 && board.GetMailbox().getColor()[arrivee] == (int)Color.PAWN_EN_PASSANT)
+                {
+                    string ep = Mailbox.tabCoord[enPassant];
+                    p = Ply.EnPassant(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr), Case.BuildCaseMailBox(enPassant, ep), true);
+                    return p;
+                }
             }
             //Generation d'un mouvement normal
-            else
-            {
-                p = Ply.Position(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
-            } 
+            
+             p = Ply.Position(Case.BuildCaseMailBox(depart, dp), Case.BuildCaseMailBox(arrivee, arr));
+            
 
             return p;
            
