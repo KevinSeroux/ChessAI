@@ -30,6 +30,7 @@ namespace ChessAI
 
         public Ply Run()
         {
+            Console.WriteLine("Avant : B" + board.GetMailbox().countPieceBlanche + ", N " + board.GetMailbox().countPieceNoir);
             // Syzygy end-game table
             Ply ply = tableReader.getBestPly();
             if (ply == null) // No results
@@ -46,6 +47,7 @@ namespace ChessAI
 
             Debug.Assert(ply != null, "ply is null");
 
+            Console.WriteLine("Apres : B" + board.GetMailbox().countPieceBlanche + ", N " + board.GetMailbox().countPieceNoir);
             return ply;
         }
 

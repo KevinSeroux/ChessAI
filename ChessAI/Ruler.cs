@@ -53,7 +53,8 @@ namespace ChessAI
             int[] piece = board.GetMailbox().getPiece();
             int side = (int)board.GetTurn;
             int xside = (int)(board.GetTurn == Color.WHITE ? Color.BLACK : Color.WHITE);
-
+            int countPieceNoir = board.GetMailbox().countPieceNoir;
+            int countPieceBlanche = board.GetMailbox().countPieceBlanche;
 
             for (int i = 0; i < 64; ++i)
             { /* loop over all squares (no piece list) */
@@ -110,8 +111,8 @@ namespace ChessAI
                             {
                                 if(n<=15 && n>=8) //Dernière ligne
                                 {
-                                    if (color[n] == (int)Color.NONE || color[n] == (int)Color.PAWN_EN_PASSANT)
-                                        if (Mailbox.countPieceNoir != Mailbox.initialCount)
+                                    if (color[n] == (int)Color.NONE)
+                                        if (countPieceNoir != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
                                 else if (color[n] == (int)Color.NONE || color[n] == (int)Color.PAWN_EN_PASSANT)
@@ -126,12 +127,12 @@ namespace ChessAI
                             {
                                 if (n <= 15 && n >= 8) //Dernière ligne
                                 {
-                                    if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
-                                        if (Mailbox.countPieceNoir != Mailbox.initialCount)
+                                    if (color[n] == (int)Color.BLACK )
+                                        if (countPieceNoir != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
                                 else
-                                if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                if (color[n] == (int)Color.BLACK || (color[n] == (int)Color.PAWN_EN_PASSANT && n < 40))
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
@@ -143,12 +144,12 @@ namespace ChessAI
                             {
                                 if (n <= 15 && n >= 8) //Dernière ligne
                                 {
-                                    if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
-                                        if (Mailbox.countPieceNoir != Mailbox.initialCount)
+                                    if (color[n] == (int)Color.BLACK)
+                                        if (countPieceNoir != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
                                 else
-                                if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                if (color[n] == (int)Color.BLACK || (color[n] == (int)Color.PAWN_EN_PASSANT && n < 40))
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
@@ -179,12 +180,12 @@ namespace ChessAI
                                 {
                                     if (color[n] == (int)Color.NONE)
                                     {
-                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                        if (countPieceBlanche != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                     }
                                 }
                                 else
-                                   if (color[n] == (int)Color.NONE)
+                                   if (color[n] == (int)Color.NONE || color[n] == (int)Color.PAWN_EN_PASSANT)
                                 {
                                     mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
@@ -196,14 +197,14 @@ namespace ChessAI
                             {
                                 if (n <= 55 && n >= 48) //Dernière ligne
                                 {
-                                    if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                    if (color[n] == (int)Color.WHITE)
                                     {
-                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                        if (countPieceBlanche != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                     }
                                 }
                                 else
-                                if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                if (color[n] == (int)Color.WHITE || (color[n] == (int)Color.PAWN_EN_PASSANT && n > 23))
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
@@ -215,14 +216,14 @@ namespace ChessAI
                             {
                                 if (n <= 55 && n >= 48) //Dernière ligne
                                 {
-                                    if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                    if (color[n] == (int)Color.WHITE)
                                     {
-                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                        if (countPieceBlanche != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                     }
                                 }
                                 else
-                                if (color[n] == (int)Color.WHITE || color[n] == (int)Color.PAWN_EN_PASSANT)
+                                if (color[n] == (int)Color.WHITE || (color[n] == (int)Color.PAWN_EN_PASSANT && n > 23))
                                 {
                                     mouvementPossible.Add(genMove(i, n, 1, -1));
                                 }
