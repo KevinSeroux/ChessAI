@@ -162,6 +162,8 @@ namespace ChessAI
         public static int countPieceBlanche = 7;
         public Mailbox(int[] tabVal)
         {
+            Mailbox.countPieceBlanche = 0;
+            Mailbox.countPieceNoir = 0;
             this.piece = new int[64];
             this.color = new int[64];
             this.ep = null;

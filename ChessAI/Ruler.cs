@@ -111,7 +111,7 @@ namespace ChessAI
                                 if(n<=15 && n>=8) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.NONE || color[n] == (int)Color.PAWN_EN_PASSANT)
-                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                        if (Mailbox.countPieceNoir != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
                                 else if (color[n] == (int)Color.NONE || color[n] == (int)Color.PAWN_EN_PASSANT)
@@ -127,7 +127,7 @@ namespace ChessAI
                                 if (n <= 15 && n >= 8) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
-                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                        if (Mailbox.countPieceNoir != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
                                 else
@@ -144,7 +144,7 @@ namespace ChessAI
                                 if (n <= 15 && n >= 8) //Dernière ligne
                                 {
                                     if (color[n] == (int)Color.BLACK || color[n] == (int)Color.PAWN_EN_PASSANT)
-                                        if (Mailbox.countPieceBlanche != Mailbox.initialCount)
+                                        if (Mailbox.countPieceNoir != Mailbox.initialCount)
                                             mouvementPossible.Add(genMove(i, n, 0, -1));
                                 }
                                 else
